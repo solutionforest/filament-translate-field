@@ -80,6 +80,29 @@ In the given example, when you save the model, the data will be stored in the fo
 }
 ```
 
+> **Important**
+> 
+> In order to ensure proper functionality, it is important to apply locales using the `locales` method of the Translate form component.
+> ```php
+> use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
+>
+> Translate::make()->locales(['en', 'zh-HK', 'zh-CN'])
+> ```
+>
+>  Alternatively, you can retrieve fallback locales from the `locales` property in configuration file (config/app.php) by leaving it as null in the Translate form component.
+>
+> ```php
+> return [
+>     // ...
+>     'locales' => ['en', 'zh-HK', 'zh-CN'],
+>     // ...
+> ];
+> ```
+>
+> If you leave the `locales` both in the Translate form component and the config('app.locales') as nullable, the rendering of the form field may fail. You can refer to the provided screenshot for better understanding.
+> ![螢幕擷取畫面 2024-01-03 173737](https://github.com/solutionforest/filament-translate-field/assets/68525320/53cf72a6-abc6-47e9-8f49-435f85196b60)
+
+
 #### Label
 
 You have the flexibility to customize the translate label for each field in each locale. You can use the `fieldTranslatableLabel` method to provide custom labels based on the field instance and the current locale.
