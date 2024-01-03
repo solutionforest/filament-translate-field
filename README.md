@@ -6,6 +6,9 @@
 
 Filament Translate Field is a library for Filament CMS that simplifies managing multiple translatable fields in different languages.
 
+![螢幕擷取畫面 2024-01-03 162934](https://github.com/solutionforest/filament-translate-field/assets/68525320/cd570abd-2c1f-455c-9812-be01103679f2)
+
+
 ## Installation
 
 You can install the package via composer:
@@ -155,6 +158,14 @@ To publish the views, use:
 ```bash
 php artisan vendor:publish --provider="SolutionForest\\FilamentTranslateField\\FilamentTranslateFieldServiceProvider" --tag="filament-translate-field-views"
 ```
+
+## Example
+
+
+https://github.com/solutionforest/filament-translate-field/assets/68525320/b561f662-532b-4969-8416-49fefdb22389
+
+
+
 
 ## Testing
 
