@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Support\Collection;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
+use SolutionForest\FilamentTranslateField\FilamentTranslateFieldPlugin;
 
 class Translate extends Component
 {
@@ -74,19 +75,20 @@ class Translate extends Component
 
     public function getLocales(): array | Collection
     {
-        return $this->evaluate($this->locales) ?? config('app.locales') ?? [];
+        return $this->evaluate($this->locales) ?? FilamentTranslateFieldPlugin::get()->getDefaultLocales() ?? [];
     }
 
     public function getLocaleLabels(): array | Collection
     {
-        return $this->evaluate($this->localeLabels) ?? [];
+        return $this->evaluate($this->localeLabels) 
+            ?? collect($this->getLocales())->map(fn ($locale) => FilamentTranslateFieldPlugin::get()->getLocaleLabel($locale, $locale))->all();
     }
 
     public function getLocaleLabel(string $locale): string
     {
         $labels =  $this->evaluate($this->localeLabels, [
             'locale' => $locale
-        ]);
+        ]) ?? FilamentTranslateFieldPlugin::get()->getLocaleLabel($locale, $locale);
 
         $label = null;
 
