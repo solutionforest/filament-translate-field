@@ -92,6 +92,8 @@ class Translate extends Component
 
         if ($labels && is_array($labels)) {
             $label = data_get($labels, $locale);
+        } else if ($labels && is_string($labels)) {
+            $label = $labels;
         }
 
         return $label ?? $locale;
