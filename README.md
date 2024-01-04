@@ -27,6 +27,35 @@ composer require solution-forest/filament-translate-field
 - Define the `translatable` fields in your model using the translatable package of your choice, such as "spatie/laravel-translatabl" or "dimsav/laravel-translatable".
 - Configure the translatable fields in the model's *$translatable* property, specifying the translatable attributes.
 
+## Adding the plugin to a panel
+To add a plugin to a panel, you must include it in the configuration file using the plugin() method:
+```php
+use SolutionForest\FilamentTranslateField\FilamentTranslateFieldPlugin;
+ 
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->plugin(FilamentTranslateFieldPlugin::make());
+}
+```
+
+## Setting the default translatable locales
+To set up the locales that can be used to translate content, you can pass an array of locales to the `defaultLocales()` plugin method:
+
+```php
+use SolutionForest\FilamentTranslateField\FilamentTranslateFieldPlugin;
+ 
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->plugin(
+            FilamentTranslateFieldPlugin::make()
+               ->defaultLocales(['en', 'es', 'fr']),
+        );
+}
+```
 
 ## Usage
 
@@ -42,119 +71,57 @@ use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
 
 Translate::make()
     ->schema([
-        TextInput::make('title')->required(), 
-        Textarea::make('short_desc'),
-        RichEditor::make('description')->columnSpanFull(),
+        // ...
     ])
-    ->locales(['en', 'es', 'fr'])
 ```
 
 
-In the given example, when you save the model, the data will be stored in the following format:
+#### Setting the translatable locales for a particular fields
+By default, the translatable locales can be set globally for all translate form component in the plugin configuration. Alternatively, you can customize the translatable locales for a particular resource by overriding the `locales()` method in `Translate` class:
 
-```json
-{
-  "id": 1,
-  "title": {
-    "en": "Dump",
-    "es": "Dump",
-    "fr": "Dump"
-  },
-  "short_desc": {
-    "en": null,
-    "es": null,
-    "fr": null
-  },
-  "description": {
-    "en": null,
-    "es": null,
-    "fr": null
-  }
-}
+```php
+use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
+
+Translate::make()->locales(['en', 'es'])
 ```
-
-> **Important**
-> 
-> In order to ensure proper functionality, it is important to apply locales using the `locales` method of the Translate form component.
-> ```php
-> use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
->
-> Translate::make()->locales(['en', 'es', 'fr'])
-> ```
->
->  Alternatively, you can retrieve fallback locales from the `locales` property in configuration file (config/app.php) by leaving it as null in the Translate form component.
->
-> ```php
-> return [
->     // ...
->     'locales' => ['en', 'es', 'fr'],
->     // ...
-> ];
-> ```
->
-> If you leave the `locales` both in the Translate form component and the config('app.locales') as nullable, the rendering of the form field may fail. You can refer to the provided screenshot for better understanding.
-> 
-> ![filament-translate-field-2](https://github.com/solutionforest/filament-translate-field/assets/68525320/51712c41-f239-438e-b79c-0b9ac1379982)
-
 
 #### Label
 
-To assign the label of the locale on the tab, you can use the `localeLabels` method. This allows you to specify the label for each locale, which will be displayed on the corresponding tab.
-```php
+##### Setting the translatable label for a particular field
 
-use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
-
- Translate::make()
-     // ...
-    ->locales(['en', 'es', 'fr'])
-    ->localeLabels([
-        'en' => 'English',
-        'es' => 'español',
-        'fr' => 'Français',
-    ])
-```
-
-You have the flexibility to customize the translate label for each field in each locale. You can use the `fieldTranslatableLabel` method to provide custom labels based on the field instance and the current locale.
+You have the flexibility to customize the translate label for each field in each locale. You can use the `fieldTranslatableLabel()` method to provide custom labels based on the field instance and the current locale.
 
 ```php
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\RichEditor;
 use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
 
  Translate::make()
     ->schema([
-        TextInput::make('title')->required(), 
-        Textarea::make('short_desc'),
-        RichEditor::make('description')->columnSpanFull(),
+        // ...
     ])
-    ->locales(['en', 'es', 'fr'])
     ->fieldTranslatableLabel(fn ($field, $locale) => __($field->getName(), locale: $locale))
 ```
 
-If you simply want to add a prefix or suffix locale label to the form field, you can use the `prefixLocaleLabel` or `suffixLocaleLabel` method. This makes it easier for users to identify the language associated with each field.
+##### Adding prefix/suffix locale label to the field
+
+If you simply want to add a prefix or suffix locale label to the form field, you can use the `prefixLocaleLabel()` or `suffixLocaleLabel()` method. This makes it easier for users to identify the language associated with each field.
 
 ```php
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\RichEditor;
 use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
 
 Translate::make()
     ->schema([
-        TextInput::make('title')->required(), 
-        Textarea::make('short_desc'),
-        RichEditor::make('description')->columnSpanFull(),
+        // ...
     ])
-    ->locales(['en', 'es', 'fr'])
     ->prefixLocaleLabel()
     ->suffixLocaleLabel()
 ```
 
-> `prefixLocaleLabel`:
+> `prefixLocaleLabel:
+> 
 > ![filament-translate-field-3](https://github.com/solutionforest/filament-translate-field/assets/68525320/0203e682-f324-4957-8680-4cffccab300c)
 
 > `suffixLocaleLabel`:
+> 
 > ![filament-translate-field-4](https://github.com/solutionforest/filament-translate-field/assets/68525320/7f4403e9-c857-4ebf-b022-8fed12094426)
 
 
@@ -168,7 +135,7 @@ use Filament\Forms\Components\Component;
 use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
 
 Translate::make()
-    ...
+    // ...
     ->prefixLocaleLabel(function(Component $field) {
         // need return boolean value
         return $field->getName() == 'title';
@@ -199,6 +166,20 @@ https://github.com/solutionforest/filament-translate-field/assets/68525320/c4d52
 
 ### Sample Code
 
+In Filament panel:
+```php
+use SolutionForest\FilamentTranslateField\FilamentTranslateFieldPlugin;
+ 
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+            ->plugin(FilamentTranslateFieldPlugin::make()
+                ->defaultLocales(['en', 'es', 'fr'])
+            );
+}
+```
+
 In app/Filament/Resources/NewsResource.php:
 ```php
 use Filament\Forms\Components\TextInput;
@@ -222,12 +203,6 @@ class NewsResource extends Resource
                         TextInput::make('title')->required(), 
                         Textarea::make('short_desc'),
                        RichEditor::make('description')->columnSpanFull(),
-                    ])
-                    ->locales(['en', 'es', 'fr'])
-                    ->localeLabels([
-                        'en' => 'English',
-                        'es' => 'español',
-                        'fr' => 'Français',
                     ])
                     ->fieldTranslatableLabel(fn ($field, $locale) => __($field->getName(), locale: $locale)),
             ]);
@@ -293,6 +268,29 @@ In resources/lang/fr.json:
     "title": "Titre",
     "short_desc": "Brève description",
     "description": "Description"
+}
+```
+
+In the given example, when you save the model, the data will be stored in the following format:
+
+```json
+{
+  "id": 1,
+  "title": {
+    "en": "Dump",
+    "es": "Dump",
+    "fr": "Dump"
+  },
+  "short_desc": {
+    "en": null,
+    "es": null,
+    "fr": null
+  },
+  "description": {
+    "en": null,
+    "es": null,
+    "fr": null
+  }
 }
 ```
 
