@@ -6,7 +6,7 @@
 
 Filament Translate Field is a library for Filament CMS that simplifies managing multiple translatable fields in different languages.
 
-![螢幕擷取畫面 2024-01-03 162934](https://github.com/solutionforest/filament-translate-field/assets/68525320/cd570abd-2c1f-455c-9812-be01103679f2)
+![filament-translate-field-1](https://github.com/solutionforest/filament-translate-field/assets/68525320/fc7af90f-1e4d-45a2-8988-0ef36632db40)
 
 
 ## Installation
@@ -41,19 +41,12 @@ use Filament\Forms\Components\RichEditor;
 use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
 
 Translate::make()
-    ->columnSpanFull()
-    ->columns(2)
     ->schema([
         TextInput::make('title')->required(), 
         Textarea::make('short_desc'),
         RichEditor::make('description')->columnSpanFull(),
     ])
-    ->locales(['en', 'zh-HK', 'zh-CN'])
-    ->localeLabels([
-        'en' => 'English',
-        'zh-HK' => '繁',
-        'zh-CN' => '簡',
-    ])
+    ->locales(['en', 'es', 'fr'])
 ```
 
 
@@ -64,18 +57,18 @@ In the given example, when you save the model, the data will be stored in the fo
   "id": 1,
   "title": {
     "en": "Dump",
-    "zh-HK": "Dump",
-    "zh-CN": "Dump"
+    "es": "Dump",
+    "fr": "Dump"
   },
   "short_desc": {
     "en": null,
-    "zh-HK": null,
-    "zh-CN": null
+    "es": null,
+    "fr": null
   },
   "description": {
     "en": null,
-    "zh-HK": null,
-    "zh-CN": null
+    "es": null,
+    "fr": null
   }
 }
 ```
@@ -86,7 +79,7 @@ In the given example, when you save the model, the data will be stored in the fo
 > ```php
 > use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
 >
-> Translate::make()->locales(['en', 'zh-HK', 'zh-CN'])
+> Translate::make()->locales(['en', 'es', 'fr'])
 > ```
 >
 >  Alternatively, you can retrieve fallback locales from the `locales` property in configuration file (config/app.php) by leaving it as null in the Translate form component.
@@ -94,16 +87,32 @@ In the given example, when you save the model, the data will be stored in the fo
 > ```php
 > return [
 >     // ...
->     'locales' => ['en', 'zh-HK', 'zh-CN'],
+>     'locales' => ['en', 'es', 'fr'],
 >     // ...
 > ];
 > ```
 >
 > If you leave the `locales` both in the Translate form component and the config('app.locales') as nullable, the rendering of the form field may fail. You can refer to the provided screenshot for better understanding.
-> ![螢幕擷取畫面 2024-01-03 173737](https://github.com/solutionforest/filament-translate-field/assets/68525320/53cf72a6-abc6-47e9-8f49-435f85196b60)
+> 
+> ![filament-translate-field-2](https://github.com/solutionforest/filament-translate-field/assets/68525320/51712c41-f239-438e-b79c-0b9ac1379982)
 
 
 #### Label
+
+To assign the label of the locale on the tab, you can use the `localeLabels` method. This allows you to specify the label for each locale, which will be displayed on the corresponding tab.
+```php
+
+use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
+
+ Translate::make()
+     // ...
+    ->locales(['en', 'es', 'fr'])
+    ->localeLabels([
+        'en' => 'English',
+        'es' => 'español',
+        'fr' => 'Français',
+    ])
+```
 
 You have the flexibility to customize the translate label for each field in each locale. You can use the `fieldTranslatableLabel` method to provide custom labels based on the field instance and the current locale.
 
@@ -119,12 +128,7 @@ use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
         Textarea::make('short_desc'),
         RichEditor::make('description')->columnSpanFull(),
     ])
-    ->locales(['en', 'zh-HK', 'zh-CN'])
-    ->localeLabels([
-        'en' => 'English',
-        'zh-HK' => '繁',
-        'zh-CN' => '簡',
-    ])
+    ->locales(['en', 'es', 'fr'])
     ->fieldTranslatableLabel(fn ($field, $locale) => __($field->getName(), locale: $locale))
 ```
 
@@ -142,15 +146,18 @@ Translate::make()
         Textarea::make('short_desc'),
         RichEditor::make('description')->columnSpanFull(),
     ])
-    ->locales(['en', 'zh-HK', 'zh-CN'])
-    ->localeLabels([
-        'en' => 'English',
-        'zh-HK' => '繁',
-        'zh-CN' => '簡',
-    ])
+    ->locales(['en', 'es', 'fr'])
     ->prefixLocaleLabel()
     ->suffixLocaleLabel()
 ```
+
+> `prefixLocaleLabel`:
+> ![filament-translate-field-3](https://github.com/solutionforest/filament-translate-field/assets/68525320/0203e682-f324-4957-8680-4cffccab300c)
+
+> `suffixLocaleLabel`:
+> ![filament-translate-field-4](https://github.com/solutionforest/filament-translate-field/assets/68525320/7f4403e9-c857-4ebf-b022-8fed12094426)
+
+
 
 #### Injecting the current form field
 
@@ -173,6 +180,9 @@ Translate::make()
 
 ```
 
+![filament-translate-field-5](https://github.com/solutionforest/filament-translate-field/assets/68525320/a88fcb69-a63d-43a6-857b-5323df877134)
+
+
 
 ## Publishing Views
 
@@ -184,11 +194,107 @@ php artisan vendor:publish --provider="SolutionForest\\FilamentTranslateField\\F
 
 ## Example
 
+### Demo
+https://github.com/solutionforest/filament-translate-field/assets/68525320/c4d52db5-1970-4f95-a5a2-30e1636dc2c8
 
-https://github.com/solutionforest/filament-translate-field/assets/68525320/b561f662-532b-4969-8416-49fefdb22389
+### Sample Code
 
+In app/Filament/Resources/NewsResource.php:
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\RichEditor;
+use Filament\Resources\Resource;
+use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
 
+class NewsResource extends Resource
+{
+    // ...
+    
+    public static function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Translate::make()
+                    ->columnSpanFull()
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('title')->required(), 
+                        Textarea::make('short_desc'),
+                       RichEditor::make('description')->columnSpanFull(),
+                    ])
+                    ->locales(['en', 'es', 'fr'])
+                    ->localeLabels([
+                        'en' => 'English',
+                        'es' => 'español',
+                        'fr' => 'Français',
+                    ])
+                    ->fieldTranslatableLabel(fn ($field, $locale) => __($field->getName(), locale: $locale)),
+            ]);
+    }
+    
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                Tables\Columns\Layout\Panel::make([
+                    Tables\Columns\TextColumn::make('data')
+                        ->getStateUsing(fn ($record) => $record->setVisible(['title', 'short_desc', 'description'])->toJson()),
+                ]),
+            ->actions([
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+            ]);
+    }
+    
+    // ...
+}
+```
 
+In app/Models/News.php:
+```php
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Translatable\HasTranslations;
+
+class News extends Model
+{
+    use HasTranslations;
+    // ...
+
+    protected $guarded = ['id'];
+
+    public $translatable = ['title', 'short_desc', 'description'];
+
+    // ...
+}
+```
+
+In resources/lang/en.json: 
+```json
+{
+    "title": "Title",
+    "short_desc": "Short description",
+    "description": "Description"
+}
+```
+
+In resources/lang/es.json: 
+```json
+{
+    "title": "Título",
+    "short_desc": "Breve descripción",
+    "description": "Descripción"
+}
+```
+
+In resources/lang/fr.json: 
+```json
+{
+    "title": "Titre",
+    "short_desc": "Brève description",
+    "description": "Description"
+}
+```
 
 ## Testing
 
