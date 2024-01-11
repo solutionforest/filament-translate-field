@@ -33,6 +33,8 @@ class Translate extends Component
 
     protected null|Closure $fieldTranslatableLabel = null;
 
+    protected ?Closure $preformLocaleLabelUsing = null;
+
     final public function __construct(array $schema = [])
     {
         $this->schema($schema);
@@ -77,6 +79,13 @@ class Translate extends Component
     public function fieldTranslatableLabel(null|Closure $fieldTranslatableLabel = null): static
     {
         $this->fieldTranslatableLabel = $fieldTranslatableLabel;
+
+        return $this;
+    }
+
+    public function preformLocaleLabelUsing(?Closure $preformLocaleLabelUsing = null): static
+    {
+        $this->preformLocaleLabelUsing = $preformLocaleLabelUsing;
 
         return $this;
     }
@@ -172,11 +181,20 @@ class Translate extends Component
         $localeComponent->label($this->getFieldTranslatableLabel($component, $locale) ?? $component->getLabel());
 
         $localeLabel = $this->getLocaleLabel($locale);
+        $performedLocaleLabel = $this->preformLocaleLabelUsing
+            ? $this->evaluate($this->preformLocaleLabelUsing, [
+                'locale' => $locale,
+                'label' => $localeLabel,
+            ])
+            : null;
+        if (! $performedLocaleLabel) {
+            $performedLocaleLabel = "({$localeLabel})";
+        }
         if ($this->hasPrefixLocaleLabel($component, $locale)) {
-            $localeComponent->label("({$localeLabel}) {$localeComponent->getLabel()}");
+            $localeComponent->label("{$performedLocaleLabel} {$localeComponent->getLabel()}");
         }
         if ($this->hasSuffixLocaleLabel($component, $locale)) {
-            $localeComponent->label("{$localeComponent->getLabel()} ({$localeLabel})");
+            $localeComponent->label("{$localeComponent->getLabel()} {$performedLocaleLabel}");
         }
 
         // Spatie transltable field format
