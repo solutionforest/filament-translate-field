@@ -3,13 +3,21 @@
 namespace SolutionForest\FilamentTranslateField\Forms\Component;
 
 use Closure;
+use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Filament\Forms\ComponentContainer;
+use Filament\Forms\Components\Concerns;
 use Filament\Forms\Components\Component;
+use Filament\Support\Concerns\CanPersistTab;
+use Filament\Support\Concerns\CanBeContained;
 use SolutionForest\FilamentTranslateField\FilamentTranslateFieldPlugin;
 
 class Translate extends Component
 {
+    use CanBeContained;
+    use CanPersistTab;
+    use Concerns\HasExtraAlpineAttributes;
+    
     /**
      * @var view-string
      */
