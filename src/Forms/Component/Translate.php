@@ -134,6 +134,16 @@ class Translate extends Component
     }
 
     /**
+     * @return array<Component>
+     */
+    public function getChildComponentsByLocale(string $locale): array
+    {
+        return $this->evaluate($this->childComponents, [
+            'locale' => $locale,
+        ]);
+    }
+
+    /**
      * @return array<ComponentContainer>
      */
     public function getChildComponentContainers(bool $withHidden = false): array
@@ -141,12 +151,11 @@ class Translate extends Component
         $containers = [];
 
         $locales = $this->getLocales();
-        $components = $this->getChildComponents();
 
         foreach ($locales as $locale) {
             $containers[$locale] = ComponentContainer::make($this->getLivewire())
                 ->parentComponent($this)
-                ->components(collect($components)
+                ->components(collect($this->getChildComponentsByLocale($locale))
                     ->map(fn ($component) => $this->prepareTranslateLocaleComponent($component, $locale))
                     ->all()
                 )
