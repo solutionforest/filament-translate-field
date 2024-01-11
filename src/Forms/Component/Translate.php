@@ -3,13 +3,21 @@
 namespace SolutionForest\FilamentTranslateField\Forms\Component;
 
 use Closure;
+use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Filament\Forms\ComponentContainer;
+use Filament\Forms\Components\Concerns;
 use Filament\Forms\Components\Component;
+use Filament\Support\Concerns\CanPersistTab;
+use Filament\Support\Concerns\CanBeContained;
 use SolutionForest\FilamentTranslateField\FilamentTranslateFieldPlugin;
 
-class Translate extends Component
+class Translate extends Component 
 {
+    use CanBeContained;
+    use CanPersistTab;
+    use Concerns\HasExtraAlpineAttributes;
+    
     /**
      * @var view-string
      */
@@ -24,6 +32,8 @@ class Translate extends Component
     protected Closure|bool $hasSuffixLocaleLabel = false;
 
     protected null|Closure $fieldTranslatableLabel = null;
+
+    protected ?Closure $preformLocaleLabelUsing = null;
 
     final public function __construct(array $schema = [])
     {
@@ -69,6 +79,20 @@ class Translate extends Component
     public function fieldTranslatableLabel(null|Closure $fieldTranslatableLabel = null): static
     {
         $this->fieldTranslatableLabel = $fieldTranslatableLabel;
+
+        return $this;
+    }
+
+    public function preformLocaleLabelUsing(?Closure $preformLocaleLabelUsing = null): static
+    {
+        $this->preformLocaleLabelUsing = $preformLocaleLabelUsing;
+
+        return $this;
+    }
+
+    public function actions(null|Closure|array $actions): static
+    {
+        $this->actions = $actions;
 
         return $this;
     }
@@ -126,6 +150,39 @@ class Translate extends Component
     }
 
     /**
+     * @return array<Component>
+     */
+    public function getChildComponentsByLocale(string $locale): array
+    {
+        return $this->evaluate($this->childComponents, [
+            'locale' => $locale,
+        ]);
+    }
+
+    public function getId(): ?string
+    {
+        $id = parent::getId();
+
+        if (filled($id)) {
+            return $id;
+        }
+
+        $id = 'translate_' . Str::uuid();
+
+        if ($statePath = $this->getStatePath()) {
+            $id = "{$statePath}.translate";
+        }
+
+        return $id;
+    }
+
+
+    public function getKey(): ?string
+    {
+        return parent::getKey() ?? ($this->getActions() ? $this->getId() : null);
+    }
+
+    /**
      * @return array<ComponentContainer>
      */
     public function getChildComponentContainers(bool $withHidden = false): array
@@ -133,12 +190,11 @@ class Translate extends Component
         $containers = [];
 
         $locales = $this->getLocales();
-        $components = $this->getChildComponents();
 
         foreach ($locales as $locale) {
             $containers[$locale] = ComponentContainer::make($this->getLivewire())
                 ->parentComponent($this)
-                ->components(collect($components)
+                ->components(collect($this->getChildComponentsByLocale($locale))
                     ->map(fn ($component) => $this->prepareTranslateLocaleComponent($component, $locale))
                     ->all()
                 )
@@ -155,11 +211,20 @@ class Translate extends Component
         $localeComponent->label($this->getFieldTranslatableLabel($component, $locale) ?? $component->getLabel());
 
         $localeLabel = $this->getLocaleLabel($locale);
+        $performedLocaleLabel = $this->preformLocaleLabelUsing
+            ? $this->evaluate($this->preformLocaleLabelUsing, [
+                'locale' => $locale,
+                'label' => $localeLabel,
+            ])
+            : null;
+        if (! $performedLocaleLabel) {
+            $performedLocaleLabel = "({$localeLabel})";
+        }
         if ($this->hasPrefixLocaleLabel($component, $locale)) {
-            $localeComponent->label("({$localeLabel}) {$localeComponent->getLabel()}");
+            $localeComponent->label("{$performedLocaleLabel} {$localeComponent->getLabel()}");
         }
         if ($this->hasSuffixLocaleLabel($component, $locale)) {
-            $localeComponent->label("{$localeComponent->getLabel()} ({$localeLabel})");
+            $localeComponent->label("{$localeComponent->getLabel()} {$performedLocaleLabel}");
         }
 
         // Spatie transltable field format
