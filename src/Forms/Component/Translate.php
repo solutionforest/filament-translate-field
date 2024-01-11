@@ -12,7 +12,7 @@ use Filament\Support\Concerns\CanPersistTab;
 use Filament\Support\Concerns\CanBeContained;
 use SolutionForest\FilamentTranslateField\FilamentTranslateFieldPlugin;
 
-class Translate extends Component
+class Translate extends Component 
 {
     use CanBeContained;
     use CanPersistTab;
@@ -90,6 +90,13 @@ class Translate extends Component
         return $this;
     }
 
+    public function actions(null|Closure|array $actions): static
+    {
+        $this->actions = $actions;
+
+        return $this;
+    }
+
     public function getLocales(): array | Collection
     {
         return $this->evaluate($this->locales) ?? FilamentTranslateFieldPlugin::get()->getDefaultLocales() ?? [];
@@ -150,6 +157,29 @@ class Translate extends Component
         return $this->evaluate($this->childComponents, [
             'locale' => $locale,
         ]);
+    }
+
+    public function getId(): ?string
+    {
+        $id = parent::getId();
+
+        if (filled($id)) {
+            return $id;
+        }
+
+        $id = 'translate_' . Str::uuid();
+
+        if ($statePath = $this->getStatePath()) {
+            $id = "{$statePath}.translate";
+        }
+
+        return $id;
+    }
+
+
+    public function getKey(): ?string
+    {
+        return parent::getKey() ?? ($this->getActions() ? $this->getId() : null);
     }
 
     /**

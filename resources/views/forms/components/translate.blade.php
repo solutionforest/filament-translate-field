@@ -42,6 +42,8 @@
     @foreach ($locales as $locale)
         @php
             $container = $getChildComponentContainer($locale);
+            $actions = $getActions();
+            $hasActions = filled($actions);
         @endphp
         <div
             x-show="activeTab == '{{ $locale }}'"
@@ -52,6 +54,15 @@
             x-on:expand="tab = @js($id)"
             class="outline-none"
         >
+            @if ($hasActions)
+                <div class="flex justify-end">
+                    @foreach ($actions as $action)
+                        @if (($action)(['locale' => $locale])->isVisible())
+                            {{ ($action)(['locale' => $locale]) }}
+                        @endif
+                    @endforeach
+                </div>
+            @endif
             <div>
                 {{ $container }}
             </div>
