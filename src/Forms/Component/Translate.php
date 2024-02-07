@@ -11,6 +11,7 @@ use Filament\Forms\Components\Component;
 use Filament\Support\Concerns\CanPersistTab;
 use Filament\Support\Concerns\CanBeContained;
 use SolutionForest\FilamentTranslateField\FilamentTranslateFieldPlugin;
+use SolutionForest\FilamentTranslateField\Forms\Component\Translate\Tab;
 
 class Translate extends Component 
 {
@@ -34,6 +35,10 @@ class Translate extends Component
     protected null|Closure $fieldTranslatableLabel = null;
 
     protected ?Closure $preformLocaleLabelUsing = null;
+
+    protected int | Closure $activeTab = 1;
+
+    protected string | Closure | null $tabQueryStringKey = null;
 
     final public function __construct(array $schema = [])
     {
@@ -93,6 +98,20 @@ class Translate extends Component
     public function actions(null|Closure|array $actions): static
     {
         $this->actions = $actions;
+
+        return $this;
+    }
+
+    public function activeTab(string | Closure $activeTab): static
+    {
+        $this->activeTab = $activeTab;
+
+        return $this;
+    }
+
+    public function persistTabInQueryString(string | Closure | null $key = 'tab'): static
+    {
+        $this->tabQueryStringKey = $key;
 
         return $this;
     }
@@ -159,27 +178,36 @@ class Translate extends Component
         ]);
     }
 
-    public function getId(): ?string
+
+    public function getActiveTab(): int
     {
-        $id = parent::getId();
+        if ($this->isTabPersistedInQueryString()) {
+            $queryStringTab = request()->query($this->getTabQueryStringKey());
 
-        if (filled($id)) {
-            return $id;
+            $tabs = collect($this->getChildComponentContainers())
+                ->map(fn ($container) => $container->getComponents()[0] ?? null)
+                ->values();
+            foreach ($tabs as $index => $tab) {
+
+                if ($tab->getId() !== $queryStringTab) {
+                    continue;
+                }
+
+                return $index + 1;
+            }
         }
 
-        $id = 'translate_' . Str::uuid();
-
-        if ($statePath = $this->getStatePath()) {
-            $id = "{$statePath}.translate";
-        }
-
-        return $id;
+        return $this->evaluate($this->activeTab, ['locales' => $this->getLocales()]);
     }
 
-
-    public function getKey(): ?string
+    public function getTabQueryStringKey(): ?string
     {
-        return parent::getKey() ?? ($this->getActions() ? $this->getId() : null);
+        return $this->evaluate($this->tabQueryStringKey);
+    }
+
+    public function isTabPersistedInQueryString(): bool
+    {
+        return filled($this->getTabQueryStringKey());
     }
 
     /**
@@ -194,10 +222,16 @@ class Translate extends Component
         foreach ($locales as $locale) {
             $containers[$locale] = ComponentContainer::make($this->getLivewire())
                 ->parentComponent($this)
-                ->components(collect($this->getChildComponentsByLocale($locale))
-                    ->map(fn ($component) => $this->prepareTranslateLocaleComponent($component, $locale))
-                    ->all()
-                )
+                ->components([
+                    Tab::make($this->getLocaleLabel($locale))
+                        ->locale($locale)
+                        ->registerActions($this->getActions())
+                        ->schema(
+                            collect($this->getChildComponentsByLocale($locale))
+                                ->map(fn ($component) => $this->prepareTranslateLocaleComponent($component, $locale))
+                                ->all()
+                        )
+                ])
                 ->getClone();
         }
 
@@ -245,3 +279,4 @@ class Translate extends Component
         return parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName);
     }
 }
+
