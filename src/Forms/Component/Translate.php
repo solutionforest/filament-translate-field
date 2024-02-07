@@ -3,14 +3,13 @@
 namespace SolutionForest\FilamentTranslateField\Forms\Component;
 
 use Closure;
-use Illuminate\Support\Str;
-use Illuminate\Support\Collection;
 use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Concerns;
 use Filament\Forms\Components\Component;
-use Filament\Support\Concerns\CanPersistTab;
+use Filament\Forms\Components\Concerns;
 use Filament\Support\Concerns\CanBeContained;
-use SolutionForest\FilamentTranslateField\FilamentTranslateFieldPlugin;
+use Filament\Support\Concerns\CanPersistTab;
+use Illuminate\Support\Collection;
+use SolutionForest\FilamentTranslateField\Facades\FilamentTranslateField;
 use SolutionForest\FilamentTranslateField\Forms\Component\Translate\Tab;
 
 class Translate extends Component 
@@ -118,20 +117,20 @@ class Translate extends Component
 
     public function getLocales(): array | Collection
     {
-        return $this->evaluate($this->locales) ?? FilamentTranslateFieldPlugin::get()->getDefaultLocales() ?? [];
+        return $this->evaluate($this->locales) ?? FilamentTranslateField::getDefaultLocales() ?? [];
     }
 
     public function getLocaleLabels(): array | Collection
     {
         return $this->evaluate($this->localeLabels) 
-            ?? collect($this->getLocales())->map(fn ($locale) => FilamentTranslateFieldPlugin::get()->getLocaleLabel($locale, $locale))->all();
+            ?? collect($this->getLocales())->map(fn ($locale) => FilamentTranslateField::getLocaleLabel($locale, $locale))->all();
     }
 
     public function getLocaleLabel(string $locale): string
     {
         $labels =  $this->evaluate($this->localeLabels, [
             'locale' => $locale
-        ]) ?? FilamentTranslateFieldPlugin::get()->getLocaleLabel($locale, $locale);
+        ]) ?? FilamentTranslateField::getLocaleLabel($locale, $locale);
 
         $label = null;
 

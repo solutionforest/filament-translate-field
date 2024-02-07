@@ -15,7 +15,8 @@ class FilamentTranslateFieldServiceProvider extends PackageServiceProvider
     {
         $package
             ->name(static::$name)
-            ->hasViews();
+            ->hasViews()
+            ->hasConfigFile();
     }
 
     public function packageBooted(): void
