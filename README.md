@@ -175,6 +175,8 @@ Translate::make()
         Action::make('fillDumpTitle')
     ])
 ```
+> *If have multiple `Translate` components and have action in each component, please add id to `Translate` component by `id()` method*
+
 
 #### Injecting the locale on current child container
 
