@@ -268,6 +268,44 @@ Translate::make()
     ->contained(false)
 ```
 
+### Exclude 
+The `exclude` feature allows you to specify fields that you don't want to be included in the translation process. This can be useful for fields that contain dynamic content or that shouldn't be translated into other languages.
+
+```php
+use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
+ 
+Translate::make([
+        Forms\Components\TextInput::make('title'),
+        Forms\Components\TextInput::make('description'),
+    ])
+    ->exclude(['desc'])
+```
+Without exclude
+```json
+{
+    "title": {
+        "en": "Dump",
+        "es": "Dump",
+        "fr": "Dump"
+    },
+    "description": {
+        "en": null,
+        "es": null,
+        "fr": null
+    }
+}
+```
+With Exclude
+```json
+{
+    "title": {
+        "en": "Dump",
+        "es": "Dump",
+        "fr": "Dump"
+    },
+    "description": null
+}
+```
 ## Publishing Views
 
 To publish the views, use:

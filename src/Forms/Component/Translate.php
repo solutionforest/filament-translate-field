@@ -24,7 +24,7 @@ class Translate extends Component
 
     protected null|Closure|array|Collection $locales = null;
 
-    protected null|Closure|array|Collection $expected = null;
+    protected null|Closure|array|Collection $exclude = null;
 
     protected null|Closure|array|Collection $localeLabels = null;
 
@@ -52,9 +52,9 @@ class Translate extends Component
 
         return $static;
     }
-    public function expected(Closure|array|Collection $expected): static
+    public function exclude(Closure|array|Collection $exclude): static
     {
-        $this->expected = $expected;
+        $this->exclude = $exclude;
 
         return $this;
     }
@@ -251,7 +251,7 @@ class Translate extends Component
 
         $localeComponent = clone $component;
 
-        if(!in_array($localeComponent->getName(),$this->expected)){
+        if(!in_array($localeComponent->getName(),$this->exclude)){
             $localeComponent->label($this->getFieldTranslatableLabel($component, $locale) ?? $component->getLabel());
 
             $localeLabel = $this->getLocaleLabel($locale);
