@@ -278,7 +278,7 @@ Translate::make([
         Forms\Components\TextInput::make('title'),
         Forms\Components\TextInput::make('description'),
     ])
-    ->exclude(['desc'])
+    ->exclude(['description'])
 ```
 Without exclude
 ```json
