@@ -24,7 +24,7 @@ class Translate extends Component
 
     protected null|Closure|array|Collection $locales = null;
 
-    protected null|Closure|array|Collection $exclude = null;
+    protected null|Closure|array|Collection $exclude = [];
 
     protected null|Closure|array|Collection $localeLabels = null;
 
