@@ -319,7 +319,7 @@ To publish the configuration file, use:
 
 ```bash
 php artisan vendor:publish --provider="SolutionForest\\FilamentTranslateField\\FilamentTranslateFieldServiceProvider" --tag="filament-translate-field-config"
-``
+```
 
 ## Example
 
