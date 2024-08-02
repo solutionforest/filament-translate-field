@@ -230,7 +230,9 @@ class Translate extends Component
             $containers[$locale] = ComponentContainer::make($this->getLivewire())
                 ->parentComponent($this)
                 ->components([
-                    Tab::make($this->getLocaleLabel($locale))
+                    Tab::make($locale)
+                        ->label($this->getLocaleLabel($locale))
+                    // Tab::make($this->getLocaleLabel($locale))
                         ->locale($locale)
                         ->registerActions($this->getActions())
                         ->schema(
