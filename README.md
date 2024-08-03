@@ -19,13 +19,13 @@ composer require solution-forest/filament-translate-field
 
 ## Important
 
-- There is a conflict with the `Translatable` trait in the [filament/spatie-laravel-translatable-plugin](https://filamentphp.com/plugins/filament-spatie-translatable) library when used on the EditPage. It is advised not to utilize the `Translatable` while editing.
+- There's a conflict with the Translatable trait in the [filament/spatie-laravel-translatable-plugin](https://filamentphp.com/plugins/filament-spatie-translatable) when used on the EditPage. Avoid using Translatable while editing.
 
 
 ## Configuration:
 
-- Define the `translatable` fields in your model using the translatable package of your choice, such as "spatie/laravel-translatable" or "dimsav/laravel-translatable".
-- Configure the translatable fields in the model's *$translatable* property, specifying the translatable attributes.
+- Define translatable fields in your model using a translatable package (e.g., "spatie/laravel-translatable" or "dimsav/laravel-translatable").
+- Configure translatable fields in the model's *$translatable* property.
 
 ## Setup
 <details>
@@ -77,17 +77,6 @@ composer require solution-forest/filament-translate-field
    
   class AppServiceProvider extends ServiceProvider
  {
-     /**
-      * Register any application services.
-      */
-     public function register(): void
-     {
-         //
-     }
- 
-     /**
-      * Bootstrap any application services.
-      */
      public function boot(): void
      {
          FilamentTranslateField::defaultLocales(['en', 'es', 'fr']);
@@ -118,7 +107,7 @@ use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
 
 Translate::make()
     ->schema([
-        // ...
+         // Your form fields here
     ])
 ```
 
@@ -143,7 +132,7 @@ use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
 
  Translate::make()
     ->schema([
-        // ...
+        // Fields
     ])
     ->fieldTranslatableLabel(fn ($field, $locale) => __($field->getName(), locale: $locale))
 ```
@@ -157,7 +146,7 @@ use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
 
 Translate::make()
     ->schema([
-        // ...
+        // Fields
     ])
     ->prefixLocaleLabel()
     ->suffixLocaleLabel()
@@ -319,7 +308,7 @@ To publish the configuration file, use:
 
 ```bash
 php artisan vendor:publish --provider="SolutionForest\\FilamentTranslateField\\FilamentTranslateFieldServiceProvider" --tag="filament-translate-field-config"
-``
+```
 
 ## Example
 
