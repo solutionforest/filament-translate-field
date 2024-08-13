@@ -253,31 +253,32 @@ class Translate extends Component
 
         $localeComponent = clone $component;
 
-        if(!in_array($localeComponent->getName(),$this->exclude)){
-            $localeComponent->label($this->getFieldTranslatableLabel($component, $locale) ?? $component->getLabel());
+        if( method_exists($localeComponent,'getName')){
+            if(!in_array($localeComponent->getName(),$this->exclude)){
+                $localeComponent->label($this->getFieldTranslatableLabel($component, $locale) ?? $component->getLabel());
 
-            $localeLabel = $this->getLocaleLabel($locale);
-            $performedLocaleLabel = $this->preformLocaleLabelUsing
-                ? $this->evaluate($this->preformLocaleLabelUsing, [
-                    'locale' => $locale,
-                    'label' => $localeLabel,
-                ])
-                : null;
-            if (! $performedLocaleLabel) {
-                $performedLocaleLabel = "({$localeLabel})";
-            }
-            if ($this->hasPrefixLocaleLabel($component, $locale)) {
-                $localeComponent->label("{$performedLocaleLabel} {$localeComponent->getLabel()}");
-            }
-            if ($this->hasSuffixLocaleLabel($component, $locale)) {
-                $localeComponent->label("{$localeComponent->getLabel()} {$performedLocaleLabel}");
-            }
+                $localeLabel = $this->getLocaleLabel($locale);
+                $performedLocaleLabel = $this->preformLocaleLabelUsing
+                    ? $this->evaluate($this->preformLocaleLabelUsing, [
+                        'locale' => $locale,
+                        'label' => $localeLabel,
+                    ])
+                    : null;
+                if (! $performedLocaleLabel) {
+                    $performedLocaleLabel = "({$localeLabel})";
+                }
+                if ($this->hasPrefixLocaleLabel($component, $locale)) {
+                    $localeComponent->label("{$performedLocaleLabel} {$localeComponent->getLabel()}");
+                }
+                if ($this->hasSuffixLocaleLabel($component, $locale)) {
+                    $localeComponent->label("{$localeComponent->getLabel()} {$performedLocaleLabel}");
+                }
 
-            // Spatie transltable field format
-            $localeComponent->name($component->getName().'.'.$locale);
-            $localeComponent->statePath($localeComponent->getName());
+                // Spatie transltable field format
+                $localeComponent->name($component->getName().'.'.$locale);
+                $localeComponent->statePath($localeComponent->getName());
+            }
         }
-
 
         return $localeComponent;
     }
@@ -293,4 +294,3 @@ class Translate extends Component
         return parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName);
     }
 }
-
