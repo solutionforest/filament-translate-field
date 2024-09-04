@@ -249,8 +249,6 @@ class Translate extends Component
 
     protected function prepareTranslateLocaleComponent(Component $component, string $locale): Component
     {
-
-
         $localeComponent = clone $component;
 
         if( method_exists($localeComponent,'getName')){
@@ -277,6 +275,15 @@ class Translate extends Component
                 // Spatie transltable field format
                 $localeComponent->name($component->getName().'.'.$locale);
                 $localeComponent->statePath($localeComponent->getName());
+            }
+        } else {
+            $childComponents = $localeComponent->getChildComponents();
+            if ($childComponents) {
+                $localeComponent->schema(
+                    collect($childComponents)
+                        ->map(fn ($childComponent) => $this->prepareTranslateLocaleComponent($childComponent, $locale))
+                        ->all()
+                );
             }
         }
 
