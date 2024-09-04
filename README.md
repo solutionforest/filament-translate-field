@@ -379,10 +379,38 @@ class NewsResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\Layout\Panel::make([
-                    Tables\Columns\TextColumn::make('data')
-                        ->getStateUsing(fn ($record) => $record->setVisible(['title', 'short_desc', 'description'])->toJson()),
-                ]),
+                
+                Tables\Columns\ColumnGroup::make('Data')
+                    ->columns([
+                        Tables\Columns\TextColumn::make('title')
+                            ->getStateUsing(fn ($record) => new HtmlString(collect($record->title)
+                                ->map(fn ($state, $locale) => <<<Html
+                                    <div class="flex gap-2">
+                                        <div class="text-sm text-gray-500">$locale</div>
+                                        <div>$state</div>
+                                    </div>
+                                Html)
+                                ->implode(''))),
+                        Tables\Columns\TextColumn::make('short_desc')
+                            ->getStateUsing(fn ($record) => new HtmlString(collect($record->short_desc)
+                                ->map(fn ($state, $locale) => <<<Html
+                                    <div class="flex gap-2">
+                                        <div class="text-sm text-gray-500">$locale</div>
+                                        <div>$state</div>
+                                    </div>
+                                Html)
+                                ->implode(''))),
+                        Tables\Columns\TextColumn::make('description')
+                            ->getStateUsing(fn ($record) => new HtmlString(collect($record->description)
+                                ->map(fn ($state, $locale) => <<<Html
+                                    <div class="flex gap-2">
+                                        <div class="text-sm text-gray-500">$locale</div>
+                                        <div>$state</div>
+                                    </div>
+                                Html)
+                                ->implode(''))),
+                    ]),
+            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
@@ -406,6 +434,12 @@ class News extends Model
     protected $guarded = ['id'];
 
     public $translatable = ['title', 'short_desc', 'description'];
+
+    public $casts = [
+        'title' => 'json',
+        'short_desc' => 'json',
+        'description' => 'json',
+    ];
 
     // ...
 }
