@@ -13,3 +13,6 @@ parameters:
     checkOctaneCompatibility: true
     
     checkModelProperties: true
+
+    ignoreErrors:
+        - '#Call to an undefined method Filament\\Forms\\Components\\Component::getName\(\)\.#'

@@ -267,13 +267,12 @@ class Translate extends Component
     {
         $localeComponent = clone $component;
 
-        if ($localeComponent instanceof Field || in_array(HasName::class, class_uses($localeComponent))) {
+        if ($localeComponent instanceof Field || method_exists($localeComponent, 'getName')) {
             
-            /** @var Field|Component&HasName $localeComponent */
-            $localeComponentName = $localeComponent->getName() ;
+            $localeComponentName = $localeComponent->getName();
 
-            if (! in_array($localeComponentName, $this->exclude)) {
-
+            if (filled($localeComponentName) && is_string($localeComponentName) && ! in_array($localeComponentName, $this->exclude)) {
+                
                 $localeComponent->label($this->getFieldTranslatableLabel($component, $locale) ?? $component->getLabel());
 
                 $localeLabel = $this->getLocaleLabel($locale);
