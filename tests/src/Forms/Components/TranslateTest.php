@@ -56,6 +56,7 @@ class TestComponentWithTranslate extends FormLivewireComponent
     {
         $exclude = $this->translateConfig['exclude'] ?? [];
         $locales = $this->translateConfig['locales'] ?? [];
+
         return $form
             ->schema([
                 Translate::make()
