@@ -5,7 +5,6 @@ namespace SolutionForest\FilamentTranslateField\Forms\Component;
 use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Concerns\HasName;
 use Filament\Forms\Components\Field;
 use Filament\Support\Concerns\CanBeContained;
 use Filament\Support\Concerns\CanPersistTab;
@@ -268,11 +267,11 @@ class Translate extends Component
         $localeComponent = clone $component;
 
         if ($localeComponent instanceof Field || method_exists($localeComponent, 'getName')) {
-            
+
             $localeComponentName = $localeComponent->getName();
 
             if (filled($localeComponentName) && is_string($localeComponentName) && ! in_array($localeComponentName, $this->exclude)) {
-                
+
                 $localeComponent->label($this->getFieldTranslatableLabel($component, $locale) ?? $component->getLabel());
 
                 $localeLabel = $this->getLocaleLabel($locale);
