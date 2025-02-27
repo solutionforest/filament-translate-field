@@ -267,7 +267,7 @@ class Translate extends Component
         $localeComponent = clone $component;
 
         if ($localeComponent instanceof Field || method_exists($localeComponent, 'getName')) {
-                    
+
             /** @phpstan-ignore-next-line */
             $localeComponentName = $localeComponent->getName();
 
