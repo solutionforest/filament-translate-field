@@ -7,10 +7,11 @@ use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
 use Filament\Support\Concerns\CanBeContained;
 use Filament\Support\Concerns\CanPersistTab;
+use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Support\Collection;
 use SolutionForest\FilamentTranslateField\Facades\FilamentTranslateField;
 use SolutionForest\FilamentTranslateField\Forms\Component\Translate\Tab;
-use Filament\Support\Concerns\HasExtraAlpineAttributes;
+
 class Translate extends Component
 {
     use CanBeContained;
@@ -22,17 +23,17 @@ class Translate extends Component
      */
     protected string $view = 'filament-translate-field::forms.components.translate';
 
-    protected null|Closure|array|Collection $locales = null;
+    protected null | Closure | array | Collection $locales = null;
 
-    protected null|Closure|array|Collection $exclude = [];
+    protected null | Closure | array | Collection $exclude = [];
 
-    protected null|Closure|array|Collection $localeLabels = null;
+    protected null | Closure | array | Collection $localeLabels = null;
 
-    protected Closure|bool $hasPrefixLocaleLabel = false;
+    protected Closure | bool $hasPrefixLocaleLabel = false;
 
-    protected Closure|bool $hasSuffixLocaleLabel = false;
+    protected Closure | bool $hasSuffixLocaleLabel = false;
 
-    protected null|Closure $fieldTranslatableLabel = null;
+    protected ?Closure $fieldTranslatableLabel = null;
 
     protected ?Closure $preformLocaleLabelUsing = null;
 
@@ -52,43 +53,43 @@ class Translate extends Component
 
         return $static;
     }
-    public function exclude(Closure|array|Collection $exclude): static
+
+    public function exclude(Closure | array | Collection $exclude): static
     {
         $this->exclude = $exclude;
 
         return $this;
     }
 
-
-    public function locales(Closure|array|Collection $locales): static
+    public function locales(Closure | array | Collection $locales): static
     {
         $this->locales = $locales;
 
         return $this;
     }
 
-    public function localeLabels(Closure|array|Collection $labels): static
+    public function localeLabels(Closure | array | Collection $labels): static
     {
         $this->localeLabels = $labels;
 
         return $this;
     }
 
-    public function prefixLocaleLabel(Closure|bool $condition = true): static
+    public function prefixLocaleLabel(Closure | bool $condition = true): static
     {
         $this->hasPrefixLocaleLabel = $condition;
 
         return $this;
     }
 
-    public function suffixLocaleLabel(Closure|bool $condition = true): static
+    public function suffixLocaleLabel(Closure | bool $condition = true): static
     {
         $this->hasSuffixLocaleLabel = $condition;
 
         return $this;
     }
 
-    public function fieldTranslatableLabel(null|Closure $fieldTranslatableLabel = null): static
+    public function fieldTranslatableLabel(?Closure $fieldTranslatableLabel = null): static
     {
         $this->fieldTranslatableLabel = $fieldTranslatableLabel;
 
@@ -102,7 +103,7 @@ class Translate extends Component
         return $this;
     }
 
-    public function actions(null|Closure|array $actions): static
+    public function actions(null | Closure | array $actions): static
     {
         $this->actions = $actions;
 
@@ -136,15 +137,15 @@ class Translate extends Component
 
     public function getLocaleLabel(string $locale): string
     {
-        $labels =  $this->evaluate($this->localeLabels, [
-            'locale' => $locale
+        $labels = $this->evaluate($this->localeLabels, [
+            'locale' => $locale,
         ]) ?? FilamentTranslateField::getLocaleLabel($locale, $locale);
 
         $label = null;
 
         if ($labels && is_array($labels)) {
             $label = data_get($labels, $locale);
-        } else if ($labels && is_string($labels)) {
+        } elseif ($labels && is_string($labels)) {
             $label = $labels;
         }
 
@@ -156,7 +157,7 @@ class Translate extends Component
         return boolval($this->evaluate($this->hasPrefixLocaleLabel, [
             'field' => $component,
             'locale' => $locale,
-            ]) ?? false);
+        ]) ?? false);
     }
 
     public function hasSuffixLocaleLabel(Component $component, string $locale): bool
@@ -164,7 +165,7 @@ class Translate extends Component
         return boolval($this->evaluate($this->hasSuffixLocaleLabel, [
             'field' => $component,
             'locale' => $locale,
-            ]) ?? false);
+        ]) ?? false);
     }
 
     public function getFieldTranslatableLabel(Component $component, string $locale): ?string
@@ -184,7 +185,6 @@ class Translate extends Component
             'locale' => $locale,
         ]);
     }
-
 
     public function getActiveTab(): int
     {
@@ -239,7 +239,7 @@ class Translate extends Component
                             collect($this->getChildComponentsByLocale($locale))
                                 ->map(fn ($component) => $this->prepareTranslateLocaleComponent($component, $locale))
                                 ->all()
-                        )
+                        ),
                 ])
                 ->getClone();
         }
@@ -251,8 +251,8 @@ class Translate extends Component
     {
         $localeComponent = clone $component;
 
-        if( method_exists($localeComponent,'getName')){
-            if(!in_array($localeComponent->getName(),$this->exclude)){
+        if (method_exists($localeComponent, 'getName')) {
+            if (! in_array($localeComponent->getName(), $this->exclude)) {
                 $localeComponent->label($this->getFieldTranslatableLabel($component, $locale) ?? $component->getLabel());
 
                 $localeLabel = $this->getLocaleLabel($locale);
@@ -273,7 +273,7 @@ class Translate extends Component
                 }
 
                 // Spatie transltable field format
-                $localeComponent->name($component->getName().'.'.$locale);
+                $localeComponent->name($component->getName() . '.' . $locale);
                 $localeComponent->statePath($localeComponent->getName());
             }
         } else {
@@ -298,6 +298,7 @@ class Translate extends Component
         if ($parameterName == 'locales') {
             return [$this->getLocales()];
         }
+
         return parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName);
     }
 }

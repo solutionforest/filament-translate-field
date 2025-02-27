@@ -3,9 +3,9 @@
 namespace SolutionForest\FilamentTranslateField;
 
 use Livewire\Features\SupportTesting\Testable;
+use SolutionForest\FilamentTranslateField\Testing\TestsFilamentTranslateField;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use SolutionForest\FilamentTranslateField\Testing\TestsFilamentTranslateField;
 
 class FilamentTranslateFieldServiceProvider extends PackageServiceProvider
 {
@@ -22,6 +22,6 @@ class FilamentTranslateFieldServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         // Testing
-        Testable::mixin(new TestsFilamentTranslateField());
+        Testable::mixin(new TestsFilamentTranslateField);
     }
 }

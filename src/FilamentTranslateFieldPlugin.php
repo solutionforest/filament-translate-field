@@ -3,8 +3,8 @@
 namespace SolutionForest\FilamentTranslateField;
 
 use Closure;
-use Filament\Panel;
 use Filament\Contracts\Plugin;
+use Filament\Panel;
 
 class FilamentTranslateFieldPlugin implements Plugin
 {
@@ -14,7 +14,7 @@ class FilamentTranslateFieldPlugin implements Plugin
     protected array $defaultLocales = [];
 
     protected ?Closure $getLocaleLabelUsing = null;
-    
+
     public function getId(): string
     {
         return 'filament-translate-field';

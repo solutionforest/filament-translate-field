@@ -4,14 +4,13 @@ namespace SolutionForest\FilamentTranslateField;
 
 use Closure;
 
-
 class FilamentTranslateField
 {
     /**
      * @var array<string>
      */
     protected ?array $defaultLocales = null;
-    
+
     protected ?Closure $getLocaleLabelUsing = null;
 
     /**
@@ -31,7 +30,6 @@ class FilamentTranslateField
     {
         return $this->defaultLocales ?? config('filament-translate-field.locales', []);
     }
-
 
     public function getLocaleLabel(string $locale, ?string $displayLocale = null): ?string
     {
