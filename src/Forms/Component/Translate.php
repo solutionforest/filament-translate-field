@@ -254,6 +254,10 @@ class Translate extends Component
         /** @var \Filament\Forms\Components\Component $localeComponent */
         $localeComponent = clone $component;
 
+        if (is_null($localeComponent)) {
+            return $localeComponent;
+        }
+
         if ($localeComponent instanceof Field || in_array(HasName::class, class_uses($localeComponent))) {
 
             $localeComponentName = $localeComponent->getName();
