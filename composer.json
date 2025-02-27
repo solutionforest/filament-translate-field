@@ -48,7 +48,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "SolutionForest\\FilamentTranslateField\\Tests\\": "tests/"
+            "SolutionForest\\FilamentTranslateField\\Tests\\": "tests/src"
         }
     },
     "scripts": {
