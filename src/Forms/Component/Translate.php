@@ -64,7 +64,7 @@ class Translate extends Component
     }
 
     /**
-     * @param \Closure|array<string>|\Illuminate\Support\Collection<string> $locales
+     * @param  \Closure|array<string>|\Illuminate\Support\Collection<string>  $locales
      */
     public function locales(Closure | array | Collection $locales): static
     {
@@ -268,9 +268,9 @@ class Translate extends Component
         $localeComponent = clone $component;
 
         if ($localeComponent instanceof Field || in_array(HasName::class, class_uses($localeComponent))) {
-            
+
             /** @var Field|Component&HasName $localeComponent */
-            $localeComponentName = $localeComponent->getName() ;
+            $localeComponentName = $localeComponent->getName();
 
             if (! in_array($localeComponentName, $this->exclude)) {
 
