@@ -64,7 +64,7 @@ class Translate extends Component
     }
 
     /**
-     * @param \Closure|array<string>|\Illuminate\Support\Collection<string> $locales
+     * @param  \Closure|array<string>|\Illuminate\Support\Collection<string>  $locales
      */
     public function locales(Closure | array | Collection $locales): static
     {
