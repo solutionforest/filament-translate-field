@@ -19,7 +19,7 @@ class Tab extends BaseComponent
 
     public function getKey(): ?string
     {
-        return parent::getKey() ?? ($this->getActions() ? $this->getId() : null);
+        return parent::getKey() ?? (count($this->getActions()) > 0 ? $this->getId() : null);
     }
 
     public function getLocale(): ?string

@@ -63,6 +63,9 @@ class Translate extends Component
         return $this;
     }
 
+    /**
+     * @param \Closure|array<string>|\Illuminate\Support\Collection<string> $locales
+     */
     public function locales(Closure | array | Collection $locales): static
     {
         $this->locales = $locales;
@@ -126,15 +129,23 @@ class Translate extends Component
         return $this;
     }
 
+    /**
+     * @return array<string>|\Illuminate\Support\Collection<string>
+     */
     public function getLocales(): array | Collection
     {
-        return $this->evaluate($this->locales) ?? FilamentTranslateField::getDefaultLocales() ?? [];
+        return $this->evaluate($this->locales) ?? FilamentTranslateField::getDefaultLocales();
     }
 
+    /**
+     * @return array<string>|\Illuminate\Support\Collection<string>
+     */
     public function getLocaleLabels(): array | Collection
     {
         return $this->evaluate($this->localeLabels)
-            ?? collect($this->getLocales())->map(fn ($locale) => FilamentTranslateField::getLocaleLabel($locale, $locale))->all();
+            ?? collect($this->getLocales())
+                ->map(fn ($locale) => FilamentTranslateField::getLocaleLabel($locale, $locale))
+                ->all();
     }
 
     public function getLocaleLabel(string $locale): string
@@ -183,22 +194,25 @@ class Translate extends Component
      */
     public function getChildComponentsByLocale(string $locale): array
     {
+        /** @var array<Component> */
         return $this->evaluate($this->childComponents, [
             'locale' => $locale,
-        ]);
+        ]) ?? [];
     }
 
     public function getActiveTab(): int
     {
         if ($this->isTabPersistedInQueryString()) {
+
             $queryStringTab = request()->query($this->getTabQueryStringKey());
 
             $tabs = collect($this->getChildComponentContainers())
-                ->map(fn ($container) => $container->getComponents()[0] ?? null)
+                ->map(fn (ComponentContainer $container) => collect($container->getComponents())->first() ?? null)
                 ->values();
+
             foreach ($tabs as $index => $tab) {
 
-                if ($tab->getId() !== $queryStringTab) {
+                if ($tab?->getId() !== $queryStringTab) {
                     continue;
                 }
 
@@ -251,16 +265,12 @@ class Translate extends Component
 
     protected function prepareTranslateLocaleComponent(Component $component, string $locale): Component
     {
-        /** @var \Filament\Forms\Components\Component $localeComponent */
         $localeComponent = clone $component;
 
-        if (is_null($localeComponent)) {
-            return $localeComponent;
-        }
-
         if ($localeComponent instanceof Field || in_array(HasName::class, class_uses($localeComponent))) {
-
-            $localeComponentName = $localeComponent->getName();
+            
+            /** @var Field|Component&HasName $localeComponent */
+            $localeComponentName = $localeComponent->getName() ;
 
             if (! in_array($localeComponentName, $this->exclude)) {
 
@@ -284,8 +294,12 @@ class Translate extends Component
                 }
 
                 // Spatie transltable field format
-                $localeComponent->name($localeComponentName . '.' . $locale);
-                $localeComponent->statePath($localeComponentName);
+                if (method_exists($localeComponent, 'name')) {
+                    $localeComponent->name($localeComponentName . '.' . $locale);
+                }
+                if (method_exists($localeComponent, 'statePath')) {
+                    $localeComponent->statePath($localeComponent->getName());
+                }
             }
 
         } else {
