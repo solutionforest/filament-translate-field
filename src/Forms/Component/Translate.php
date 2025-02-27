@@ -5,6 +5,8 @@ namespace SolutionForest\FilamentTranslateField\Forms\Component;
 use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Concerns\HasName;
+use Filament\Forms\Components\Field;
 use Filament\Support\Concerns\CanBeContained;
 use Filament\Support\Concerns\CanPersistTab;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
@@ -249,10 +251,15 @@ class Translate extends Component
 
     protected function prepareTranslateLocaleComponent(Component $component, string $locale): Component
     {
+        /** @var \Filament\Forms\Components\Component $localeComponent */
         $localeComponent = clone $component;
 
-        if (method_exists($localeComponent, 'getName')) {
-            if (! in_array($localeComponent->getName(), $this->exclude)) {
+        if ($localeComponent instanceof Field || in_array(HasName::class, class_uses($localeComponent))) {
+
+            $localeComponentName = $localeComponent->getName();
+
+            if (! in_array($localeComponentName, $this->exclude)) {
+
                 $localeComponent->label($this->getFieldTranslatableLabel($component, $locale) ?? $component->getLabel());
 
                 $localeLabel = $this->getLocaleLabel($locale);
@@ -273,11 +280,14 @@ class Translate extends Component
                 }
 
                 // Spatie transltable field format
-                $localeComponent->name($component->getName() . '.' . $locale);
-                $localeComponent->statePath($localeComponent->getName());
+                $localeComponent->name($localeComponentName . '.' . $locale);
+                $localeComponent->statePath($localeComponentName);
             }
+
         } else {
+
             $childComponents = $localeComponent->getChildComponents();
+
             if ($childComponents) {
                 $localeComponent->schema(
                     collect($childComponents)
