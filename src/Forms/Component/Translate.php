@@ -268,7 +268,6 @@ class Translate extends Component
 
         if ($localeComponent instanceof Field || method_exists($localeComponent, 'getName')) {
 
-            /** @phpstan-ignore-next-line */
             $localeComponentName = $localeComponent->getName();
 
             if (filled($localeComponentName) && is_string($localeComponentName) && ! in_array($localeComponentName, $this->exclude)) {
@@ -294,11 +293,9 @@ class Translate extends Component
 
                 // Spatie transltable field format
                 if (method_exists($localeComponent, 'name')) {
-                    /** @phpstan-ignore-next-line */
                     $localeComponent->name($localeComponentName . '.' . $locale);
                 }
                 if (method_exists($localeComponent, 'statePath')) {
-                    /** @phpstan-ignore-next-line */
                     $localeComponent->statePath($localeComponent->getName());
                 }
             }
