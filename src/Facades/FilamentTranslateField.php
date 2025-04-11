@@ -5,7 +5,7 @@ namespace SolutionForest\FilamentTranslateField\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static static defaultLocales()
+ * @method static static defaultLocales(?array $locales = null)
  * @method static array getDefaultLocales()
  * @method static ?string getLocaleLabel(string $locale, ?string $displayLocale = null)
  * @method static static getLocaleLabelUsing(?\Closure $callback)
