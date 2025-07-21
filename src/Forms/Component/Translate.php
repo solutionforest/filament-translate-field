@@ -2,13 +2,13 @@
 
 namespace SolutionForest\FilamentTranslateField\Forms\Component;
 
+use Closure;
+use Filament\Forms\Components\Field;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\CanPersistTab;
-use Filament\Schemas\Schema;
-use Closure;
-use Filament\Schemas\Contracts\HasRenderHookScopes;
-use Filament\Forms\Components\Field;
 use Filament\Schemas\Components\Concerns\HasLabel;
+use Filament\Schemas\Contracts\HasRenderHookScopes;
+use Filament\Schemas\Schema;
 use Filament\Support\Concerns\CanBeContained;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Support\Collection;
@@ -48,7 +48,7 @@ class Translate extends Component
     protected string | Closure | null $livewireProperty = null;
 
     protected bool | Closure $isVertical = false;
-    
+
     /**
      * @var array<string>
      */
@@ -80,7 +80,7 @@ class Translate extends Component
     }
 
     /**
-     * @param Closure|array<string>|Collection<string> $locales
+     * @param  Closure|array<string>|Collection<string>  $locales
      */
     public function locales(Closure | array | Collection $locales): static
     {
@@ -213,7 +213,7 @@ class Translate extends Component
         /** @var array<Component> */
         return $this->evaluate($this->childComponents, [
             'locale' => $locale,
-        ])?? [];
+        ]) ?? [];
     }
 
     public function getActiveTab(): int
@@ -268,7 +268,7 @@ class Translate extends Component
                         ->locale($locale)
                         ->registerActions($this->getActions())
                         ->schema(
-                            collect($this->getChildComponentsByLocale($locale)['default'] )
+                            collect($this->getChildComponentsByLocale($locale)['default'])
                                 ->map(fn ($component) => $this->prepareTranslateLocaleComponent($component, $locale))
                                 ->all()
                         ),
