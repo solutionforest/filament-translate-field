@@ -2,12 +2,14 @@
 
 namespace SolutionForest\FilamentTranslateField\Forms\Component;
 
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Concerns\CanPersistTab;
+use Filament\Schemas\Schema;
 use Closure;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Component;
+use Filament\Schemas\Contracts\HasRenderHookScopes;
 use Filament\Forms\Components\Field;
+use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Support\Concerns\CanBeContained;
-use Filament\Support\Concerns\CanPersistTab;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Support\Collection;
 use SolutionForest\FilamentTranslateField\Facades\FilamentTranslateField;
@@ -18,6 +20,7 @@ class Translate extends Component
     use CanBeContained;
     use CanPersistTab;
     use HasExtraAlpineAttributes;
+    use HasLabel;
 
     /**
      * @var view-string
@@ -42,6 +45,20 @@ class Translate extends Component
 
     protected string | Closure | null $tabQueryStringKey = null;
 
+    protected string | Closure | null $livewireProperty = null;
+
+    protected bool | Closure $isVertical = false;
+    
+    /**
+     * @var array<string>
+     */
+    protected array $startRenderHooks = [];
+
+    /**
+     * @var array<string>
+     */
+    protected array $endRenderHooks = [];
+
     final public function __construct(array $schema = [])
     {
         $this->schema($schema);
@@ -63,7 +80,7 @@ class Translate extends Component
     }
 
     /**
-     * @param  \Closure|array<string>|\Illuminate\Support\Collection<string>  $locales
+     * @param Closure|array<string>|Collection<string> $locales
      */
     public function locales(Closure | array | Collection $locales): static
     {
@@ -129,7 +146,7 @@ class Translate extends Component
     }
 
     /**
-     * @return array<string>|\Illuminate\Support\Collection<string>
+     * @return array<string>|Collection<string>
      */
     public function getLocales(): array | Collection
     {
@@ -137,7 +154,7 @@ class Translate extends Component
     }
 
     /**
-     * @return array<string>|\Illuminate\Support\Collection<string>
+     * @return array<string>|Collection<string>
      */
     public function getLocaleLabels(): array | Collection
     {
@@ -196,7 +213,7 @@ class Translate extends Component
         /** @var array<Component> */
         return $this->evaluate($this->childComponents, [
             'locale' => $locale,
-        ]) ?? [];
+        ])?? [];
     }
 
     public function getActiveTab(): int
@@ -206,7 +223,7 @@ class Translate extends Component
             $queryStringTab = request()->query($this->getTabQueryStringKey());
 
             $tabs = collect($this->getChildComponentContainers())
-                ->map(fn (ComponentContainer $container) => collect($container->getComponents())->first() ?? null)
+                ->map(fn (Schema $schema) => collect($schema->getComponents())->first() ?? null)
                 ->values();
 
             foreach ($tabs as $index => $tab) {
@@ -233,7 +250,7 @@ class Translate extends Component
     }
 
     /**
-     * @return array<ComponentContainer>
+     * @return array<Schema>
      */
     public function getChildComponentContainers(bool $withHidden = false): array
     {
@@ -242,7 +259,7 @@ class Translate extends Component
         $locales = $this->getLocales();
 
         foreach ($locales as $locale) {
-            $containers[$locale] = ComponentContainer::make($this->getLivewire())
+            $containers[$locale] = Schema::make($this->getLivewire())
                 ->parentComponent($this)
                 ->components([
                     Tab::make($locale)
@@ -251,7 +268,7 @@ class Translate extends Component
                         ->locale($locale)
                         ->registerActions($this->getActions())
                         ->schema(
-                            collect($this->getChildComponentsByLocale($locale))
+                            collect($this->getChildComponentsByLocale($locale)['default'] )
                                 ->map(fn ($component) => $this->prepareTranslateLocaleComponent($component, $locale))
                                 ->all()
                         ),
@@ -302,7 +319,7 @@ class Translate extends Component
 
         } else {
 
-            $childComponents = $localeComponent->getChildComponents();
+            $childComponents = $localeComponent->getDefaultChildComponents();
 
             if ($childComponents) {
                 $localeComponent->schema(
@@ -326,5 +343,79 @@ class Translate extends Component
         }
 
         return parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName);
+    }
+
+    /**
+     * @param  array<string>  $hooks
+     */
+    public function startRenderHooks(array $hooks): static
+    {
+        $this->startRenderHooks = $hooks;
+
+        return $this;
+    }
+
+    /**
+     * @param  array<string>  $hooks
+     */
+    public function endRenderHooks(array $hooks): static
+    {
+        $this->endRenderHooks = $hooks;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getStartRenderHooks(): array
+    {
+        return $this->startRenderHooks;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getEndRenderHooks(): array
+    {
+        return $this->endRenderHooks;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getRenderHookScopes(): array
+    {
+        $livewire = $this->getLivewire();
+
+        if (! ($livewire instanceof HasRenderHookScopes)) {
+            return [];
+        }
+
+        return $livewire->getRenderHookScopes();
+    }
+
+    public function livewireProperty(string | Closure | null $property): static
+    {
+        $this->livewireProperty = $property;
+
+        return $this;
+    }
+
+    public function getLivewireProperty(): ?string
+    {
+        return $this->evaluate($this->livewireProperty);
+    }
+
+    public function vertical(bool | Closure $condition = true): static
+    {
+        $this->isVertical = $condition;
+
+        return $this;
+    }
+
+    public function isVertical(): bool
+    {
+        return (bool) $this->evaluate($this->isVertical);
     }
 }
