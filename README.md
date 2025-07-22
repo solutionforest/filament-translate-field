@@ -11,7 +11,7 @@ Filament Translate Field is a library for Filament CMS that simplifies managing 
 
 ## Installation
 
-| Filament Version | Filament Newsletter Version |
+| Filament Version | Filament Translate Field Version |
 |------------------|---------------------------|
 | v3.x             | v0.x – v1.x               |
 | v4.x             | v2.x
