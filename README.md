@@ -23,6 +23,15 @@ You can install the package via composer:
 composer require solution-forest/filament-translate-field
 ```
 
+Publish the assets:
+
+```bash
+php artisan filament:assets
+```
+```bash
+php artisan optimize
+```
+
 ## Important
 
 - There is a conflict with the `Translatable` trait in the [filament/spatie-laravel-translatable-plugin](https://filamentphp.com/plugins/filament-spatie-translatable) library when used on the EditPage. It is advised not to utilize the `Translatable` while editing.
