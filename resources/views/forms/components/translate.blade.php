@@ -77,16 +77,9 @@
             @endforeach
         </x-filament::tabs>
 
-        <div class="fi-section" style="--tw-shadow: none;">
-            <div class="fi-section-content-ctn">
-                <div class="fi-sc  fi-sc-has-gap fi-grid  fi-section-content">
-
-                    @foreach ($getChildSchema()->getComponents() as $tab)
-                        {{ $tab }}
-                    @endforeach
-                </div>
-            </div>
-        </div>
+        @foreach ($tabs as $tab)
+            {{ $tab }}
+        @endforeach
     </div>
 @else
     @php
@@ -106,7 +99,7 @@
                 {{ \Filament\Support\Facades\FilamentView::renderHook($startRenderHook, scopes: $renderHookScopes) }}
             @endforeach
 
-            @foreach ($getChildSchema()->getComponents(withOriginalKeys: true) as $tabKey => $tab)
+            @foreach ($tabs as $tabKey => $tab)
                 @php
                     $tabBadge = $tab->getBadge();
                     $tabBadgeColor = $tab->getBadgeColor();
@@ -131,8 +124,8 @@
                 {{ \Filament\Support\Facades\FilamentView::renderHook($endRenderHook, scopes: $renderHookScopes) }}
             @endforeach
         </x-filament::tabs>
-        asdasd
-        @foreach ($getChildSchema()->getComponents(withOriginalKeys: true) as $tabKey => $tab)
+
+        @foreach ($tabs as $tabKey => $tab)
             <div class="p-4">
                 {{ $tab->key($tabKey) }}
             </div>

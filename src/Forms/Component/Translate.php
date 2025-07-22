@@ -264,7 +264,6 @@ class Translate extends Component
                 ->components([
                     Tab::make($locale)
                         ->label($this->getLocaleLabel($locale))
-                    // Tab::make($this->getLocaleLabel($locale))
                         ->locale($locale)
                         ->registerActions($this->getActions())
                         ->schema(
@@ -314,6 +313,7 @@ class Translate extends Component
                 }
                 if (method_exists($localeComponent, 'statePath')) {
                     $localeComponent->statePath($localeComponent->getName());
+                    $localeComponent->flushCachedAbsoluteStatePath();
                 }
             }
 
@@ -329,7 +329,7 @@ class Translate extends Component
                 );
             }
         }
-
+        
         return $localeComponent;
     }
 
