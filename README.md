@@ -11,10 +11,25 @@ Filament Translate Field is a library for Filament CMS that simplifies managing 
 
 ## Installation
 
+| Filament Version | Filament Translate Field Version |
+|------------------|---------------------------|
+| v3.x             | v0.x – v1.x               |
+| v4.x             | v2.x
+
+
 You can install the package via composer:
 
 ```bash
 composer require solution-forest/filament-translate-field
+```
+
+Publish the assets:
+
+```bash
+php artisan filament:assets
+```
+```bash
+php artisan optimize
 ```
 
 ## Important
