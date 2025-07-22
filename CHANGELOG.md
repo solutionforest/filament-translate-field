@@ -2,6 +2,26 @@
 
 All notable changes to `filament-translate-field` will be documented in this file.
 
+## 2.0.0 - 2025-07-22
+
+### 🎉 Major Update: Filament v4.0 Support
+
+This release brings full compatibility with **Filament ^4.0**.
+
+### ⚠️ Breaking Changes
+
+- **Minimum Requirements**: Filament 4.0+
+- **For Filament v3.x users**: Please stay on Filament Newsletter v1.x.
+
+### 📦 Version Compatibility
+
+- **v2.0+**: Filament ^4.0 + Laravel ^11.0
+- **v1.x**: Filament ^3.0 + Laravel ^10.0
+
+### 📚 Upgrade Guide
+
+Before the package assets can be used, you’ll need to run `php artisan filament:assets` and `php artisan optimize`.
+
 ## 1.4.1 - 2025-04-11
 
 ### What's Changed
