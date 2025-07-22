@@ -329,7 +329,7 @@ class Translate extends Component
                 );
             }
         }
-        
+
         return $localeComponent;
     }
 

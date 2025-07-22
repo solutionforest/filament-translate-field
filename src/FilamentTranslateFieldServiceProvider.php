@@ -46,5 +46,4 @@ class FilamentTranslateFieldServiceProvider extends PackageServiceProvider
             Css::make('filament-translate-field-styles', __DIR__ . '/../resources/dist/filament-translate-fields.css'),
         ];
     }
-
 }
