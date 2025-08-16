@@ -2,35 +2,24 @@
 
 namespace SolutionForest\FilamentTranslateField\Tests\Forms\Fixtures;
 
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
+use Illuminate\Contracts\Support\MessageBag as MessageBagContract;
+use Illuminate\Support\MessageBag;
 use Livewire\Component;
 
-class Livewire extends Component implements HasForms
+class Livewire extends Component implements HasSchemas
 {
-    use InteractsWithForms;
+    use InteractsWithSchemas;
 
-    public $data;
+    public $data = [];
 
-    public static function make(): static
+    public function getErrorBag(): MessageBag
     {
-        return new static;
-    }
+        if (property_exists($this, 'errorBag') && $this->errorBag instanceof MessageBagContract) {
+            return $this->errorBag;
+        }
 
-    public function mount(): void
-    {
-        $this->form->fill();
-    }
-
-    public function data($data): static
-    {
-        $this->data = $data;
-
-        return $this;
-    }
-
-    public function getData()
-    {
-        return $this->data;
+        return new MessageBag;
     }
 }

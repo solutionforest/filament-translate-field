@@ -2,7 +2,7 @@
 
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -52,13 +52,13 @@ class TestComponentWithTranslate extends FormLivewireComponent
 {
     public array $translateConfig = [];
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
         $exclude = $this->translateConfig['exclude'] ?? [];
         $locales = $this->translateConfig['locales'] ?? [];
 
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Translate::make()
                     ->schema([
                         TextInput::make('title')->required(),
