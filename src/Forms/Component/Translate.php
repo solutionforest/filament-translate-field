@@ -264,7 +264,7 @@ class Translate extends Component
                         ->locale($locale)
                         ->registerActions($this->getActions())
                         ->schema(
-                            collect($this->getChildComponentsByLocale($locale)['default'])
+                            collect($this->getChildComponentsByLocale($locale))
                                 ->map(fn ($component) => $this->prepareTranslateLocaleComponent($component, $locale))
                                 ->all()
                         ),
