@@ -4,7 +4,12 @@ namespace SolutionForest\FilamentTranslateField\Forms\Component\Translate;
 
 class Tab extends \Filament\Schemas\Components\Tabs\Tab
 {
-    protected string $view = 'filament-translate-field::forms.components.translate-tab';
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->view('filament-translate-field::forms.components.translate-tab');
+    }
 
     protected ?string $locale = null;
 

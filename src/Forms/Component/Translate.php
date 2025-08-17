@@ -22,9 +22,6 @@ class Translate extends Component
     use HasExtraAlpineAttributes;
     use HasLabel;
 
-    /**
-     * @var view-string
-     */
     protected string $view = 'filament-translate-field::forms.components.translate';
 
     protected null | Closure | array | Collection $locales = null;
@@ -287,8 +284,10 @@ class Translate extends Component
             $localeComponentName = $localeComponent->getName();
 
             if (filled($localeComponentName) && is_string($localeComponentName) && ! in_array($localeComponentName, $this->exclude)) {
-
-                $localeComponent->label($this->getFieldTranslatableLabel($component, $locale) ?? $component->getLabel());
+                if (method_exists($localeComponent, 'label')) {
+                    $currentLabel = method_exists($component, 'getLabel') ? $component->getLabel() : null;
+                    $localeComponent->label($this->getFieldTranslatableLabel($component, $locale) ?? $currentLabel);
+                }
 
                 $localeLabel = $this->getLocaleLabel($locale);
                 $performedLocaleLabel = $this->preformLocaleLabelUsing
@@ -300,11 +299,15 @@ class Translate extends Component
                 if (! $performedLocaleLabel) {
                     $performedLocaleLabel = "({$localeLabel})";
                 }
-                if ($this->hasPrefixLocaleLabel($component, $locale)) {
-                    $localeComponent->label("{$performedLocaleLabel} {$localeComponent->getLabel()}");
-                }
-                if ($this->hasSuffixLocaleLabel($component, $locale)) {
-                    $localeComponent->label("{$localeComponent->getLabel()} {$performedLocaleLabel}");
+                if (method_exists($localeComponent, 'label')) {
+                    if ($this->hasPrefixLocaleLabel($component, $locale)) {
+                        $existing = method_exists($localeComponent, 'getLabel') ? $localeComponent->getLabel() : '';
+                        $localeComponent->label("{$performedLocaleLabel} {$existing}");
+                    }
+                    if ($this->hasSuffixLocaleLabel($component, $locale)) {
+                        $existing = method_exists($localeComponent, 'getLabel') ? $localeComponent->getLabel() : '';
+                        $localeComponent->label("{$existing} {$performedLocaleLabel}");
+                    }
                 }
 
                 // Spatie transltable field format
