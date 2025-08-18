@@ -17,7 +17,7 @@ class PostResource extends Resource
     {
         return $schema->components([
             Translate::make()
-                ->locales(['en','fr'])
+                ->locales(['en', 'fr'])
                 ->schema([
                     TextInput::make('title')->label('Title')->required(),
                     Textarea::make('content'),
