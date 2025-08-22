@@ -47,7 +47,7 @@
             value="{{ collect($tabs)->filter(static fn(Tab $tab): bool => $tab->isVisible())->map(static fn(Tab $tab) => $tab->getKey(isAbsolute: false))->values()->toJson() }}"
             x-ref="tabsData" />
 
-        <x-filament::tabs :contained="$isContained" :label="$label" :vertical="$isVertical" x-cloak>
+        <x-filament::tabs :contained="$isContained" class="mb-2" :label="$label" :vertical="$isVertical" x-cloak>
             @foreach ($getStartRenderHooks() as $startRenderHook)
                 {{ \Filament\Support\Facades\FilamentView::renderHook($startRenderHook, scopes: $renderHookScopes) }}
             @endforeach
