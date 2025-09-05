@@ -2,6 +2,22 @@
 
 All notable changes to `filament-translate-field` will be documented in this file.
 
+## 2.0.1 - 2025-09-05
+
+### What's Changed
+
+* Bump aglipanci/laravel-pint-action from 2.5 to 2.6 by @dependabot[bot] in https://github.com/solutionforest/filament-translate-field/pull/24
+* fix: replace getChildComponentContainers with getChildSchemas by @webard in https://github.com/solutionforest/filament-translate-field/pull/21
+* Bump actions/checkout from 4 to 5 by @dependabot[bot] in https://github.com/solutionforest/filament-translate-field/pull/22
+* Feat: Fix translate component and introduce more tests by @repl6669 in https://github.com/solutionforest/filament-translate-field/pull/23
+
+### New Contributors
+
+* @webard made their first contribution in https://github.com/solutionforest/filament-translate-field/pull/21
+* @repl6669 made their first contribution in https://github.com/solutionforest/filament-translate-field/pull/23
+
+**Full Changelog**: https://github.com/solutionforest/filament-translate-field/compare/2.0.0...2.0.1
+
 ## 2.0.0 - 2025-07-22
 
 ### 🎉 Major Update: Filament v4.0 Support
