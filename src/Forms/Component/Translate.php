@@ -222,7 +222,7 @@ class Translate extends Component
 
             $queryStringTab = request()->query($this->getTabQueryStringKey());
 
-            $tabs = collect($this->getChildComponentContainers())
+            $tabs = collect($this->getChildSchemas())
                 ->map(fn (Schema $schema) => collect($schema->getComponents())->first() ?? null)
                 ->values();
 
@@ -252,7 +252,7 @@ class Translate extends Component
     /**
      * @return array<Schema>
      */
-    public function getChildComponentContainers(bool $withHidden = false): array
+    public function getChildSchemas(bool $withHidden = false): array
     {
         $containers = [];
 
