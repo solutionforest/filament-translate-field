@@ -12,7 +12,7 @@
 
     $visibleTabClasses = \Illuminate\Support\Arr::toCssClasses([
         'p-6' => $isContained,
-        'mt-6' => !$isContained,
+        'mt-8' => !$isContained,
     ]);
 
     $invisibleTabClasses = 'invisible h-0 overflow-y-hidden p-0';

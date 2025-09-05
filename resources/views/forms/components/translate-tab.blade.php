@@ -5,7 +5,7 @@
     $activeTabClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-active',
         'p-6' => $isContained,
-        'mt-6' => ! $isContained,
+        'mt-8' => ! $isContained,
     ]);
 
     $inactiveTabClasses = 'invisible h-0 overflow-hidden p-0';
