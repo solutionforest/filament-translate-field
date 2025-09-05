@@ -1,15 +1,15 @@
 includes:
-    - phpstan-baseline.neon
+    - ./vendor/larastan/larastan/extension.neon
 
 parameters:
+
     level: 3
-    
+
     paths:
-        - src
-        - config
-    
-    tmpDir: build/phpstan
-    
+        - ./src
+        - ./config
+
+    tmpDir: ./build/phpstan
+
     checkOctaneCompatibility: true
-    
     checkModelProperties: true
