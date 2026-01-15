@@ -2,6 +2,34 @@
 
 All notable changes to `filament-translate-field` will be documented in this file.
 
+## 2.1.0 - 2026-01-15
+
+### 🎉 What's New
+
+This minor release includes several improvements, bug fixes, and dependency updates to enhance compatibility and stability with Filament v4.0.
+
+### 🐛 Bug Fixes
+
+- **Component Fixes**: Resolved issues with the translate component functionality.
+- **Styling Corrections**: Fixed various styling inconsistencies.
+- **Deprecated Methods**: Updated code to remove usage of deprecated methods.
+
+### What's Changed
+
+* Bump nick-fields/retry from 2 to 3 by @dependabot[bot] in https://github.com/solutionforest/filament-translate-field/pull/29
+* Bump actions/checkout from 4 to 5 by @dependabot[bot] in https://github.com/solutionforest/filament-translate-field/pull/28
+* Remove filament/upgrade requirement in composer.json by @ctoma in https://github.com/solutionforest/filament-translate-field/pull/30
+* Bump dependabot/fetch-metadata from 2.4.0 to 2.5.0 by @dependabot[bot] in https://github.com/solutionforest/filament-translate-field/pull/35
+* Bump actions/cache from 4 to 5 by @dependabot[bot] in https://github.com/solutionforest/filament-translate-field/pull/34
+* Bump actions/checkout from 5 to 6 by @dependabot[bot] in https://github.com/solutionforest/filament-translate-field/pull/33
+* Bump stefanzweifel/git-auto-commit-action from 6 to 7 by @dependabot[bot] in https://github.com/solutionforest/filament-translate-field/pull/32
+
+### New Contributors
+
+* @ctoma made their first contribution in https://github.com/solutionforest/filament-translate-field/pull/30
+
+**Full Changelog**: https://github.com/solutionforest/filament-translate-field/compare/2.0.1...2.1.0
+
 ## 2.0.1 - 2025-09-05
 
 ### What's Changed
