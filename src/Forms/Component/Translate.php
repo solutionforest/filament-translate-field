@@ -274,7 +274,8 @@ class Translate extends Component
                                 ->all();
 
                             return collect($components)
-                                ->when(count($actions) > 0,
+                                ->when(
+                                    count($actions) > 0,
                                     function (Collection $collection) use ($actions) {
                                         return $collection->prepend(
                                             Actions::make($actions)
@@ -296,7 +297,7 @@ class Translate extends Component
     {
         $cloned = clone $action;
         $cloned->name("{$action->getName()}_{$locale}");
-        
+
         $arguments = $cloned->getArguments();
         $arguments['locale'] = $locale;
         $cloned->arguments($arguments);
