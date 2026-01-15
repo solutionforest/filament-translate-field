@@ -4,6 +4,7 @@ namespace SolutionForest\FilamentTranslateField\Forms\Component;
 
 use Closure;
 use Filament\Forms\Components\Field;
+use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\CanPersistTab;
 use Filament\Schemas\Components\Concerns\HasLabel;
@@ -262,17 +263,45 @@ class Translate extends Component
                     Tab::make($locale)
                         ->label($this->getLocaleLabel($locale))
                         ->locale($locale)
-                        ->registerActions($this->getActions())
-                        ->schema(
-                            collect($this->getChildComponentsByLocale($locale))
+                        ->schema(function () use ($locale) {
+                            // Prepare actions for locale
+                            $actions = collect($this->getActions())
+                                ->map(fn ($action) => $this->prepareActionForLocale($action, $locale))
+                                ->all();
+
+                            $components = collect($this->getChildComponentsByLocale($locale))
                                 ->map(fn ($component) => $this->prepareTranslateLocaleComponent($component, $locale))
-                                ->all()
-                        ),
+                                ->all();
+
+                            return collect($components)
+                                ->when(count($actions) > 0,
+                                    function (Collection $collection) use ($actions) {
+                                        return $collection->prepend(
+                                            Actions::make($actions)
+                                                // Align to end
+                                                ->alignEnd()
+                                        );
+                                    }
+                                )
+                                ->all();
+                        }),
                 ])
                 ->getClone();
         }
 
         return $containers;
+    }
+
+    protected function prepareActionForLocale($action, string $locale)
+    {
+        $cloned = clone $action;
+        $cloned->name("{$action->getName()}_{$locale}");
+        
+        $arguments = $cloned->getArguments();
+        $arguments['locale'] = $locale;
+        $cloned->arguments($arguments);
+
+        return $cloned;
     }
 
     protected function prepareTranslateLocaleComponent(Component $component, string $locale): Component

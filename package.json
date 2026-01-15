@@ -2,24 +2,25 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "dev": "npx tailwindcss -i resources/css/app.css -o resources/dist/filament-translate-fields.css --postcss --watch",
-        "dev-auto": "npm run build && npm run copy && npx tailwindcss -i resources/css/app.css -o resources/dist/filament-translate-fields.css --postcss --watch",
-        "build": "npx tailwindcss -i resources/css/app.css -o resources/dist/filament-translate-fields.css --postcss --minify",
-        "build-with-purge": "npx tailwindcss -i resources/css/app.css -o resources/dist/filament-translate-fields.css --postcss --minify && npm run purge",
-        "purge": "filament-purge -i resources/dist/filament-translate-fields.css -o resources/dist/filament-translate-fields.css -v 3.x"
+        "dev:styles": "npx @tailwindcss/cli -i resources/css/index.css -o resources/dist/filament-translate-fields.css --watch",
+        "build:styles": "npx @tailwindcss/cli -i resources/css/index.css -o resources/dist/filament-translate-fields.css",
+        "purge": "filament-purge -i resources/dist/filament-translate-fields.css -o resources/dist/filament-translate-fields.css -v 3.x",
+        "dev": "npm-run-all --parallel dev:*",
+        "build": "npm-run-all build:*"
     },
     "devDependencies": {
         "@awcodes/filament-plugin-purge": "^1.1.1",
-        "@tailwindcss/cli": "^4.1.11",
         "@tailwindcss/forms": "^0.5.4",
         "@tailwindcss/typography": "^0.5.9",
         "autoprefixer": "^10.4.14",
+        "esbuild": "^0.19.2",
+        "npm-run-all": "^4.1.5",
         "postcss": "^8.4.26",
         "postcss-import": "^15.1.0",
-        "postcss-nesting": "^13.0.2",
-        "tailwindcss": "^4.1.11"
+        "prettier": "^2.7.1",
+        "prettier-plugin-tailwindcss": "^0.1.13"
     },
     "dependencies": {
-        "@tailwindcss/postcss": "^4.1.11"
+        "@tailwindcss/cli": "^4.1.11"
     }
 }

@@ -10,13 +10,6 @@
     $locales = $getLocales() ?? [];
     $defaultLocale = $locales[0] ?? null;
 
-    $visibleTabClasses = \Illuminate\Support\Arr::toCssClasses([
-        'p-6' => $isContained,
-        'mt-6' => !$isContained,
-    ]);
-
-    $invisibleTabClasses = 'invisible h-0 overflow-y-hidden p-0';
-
     $childComponentsWithLocale = collect($getChildComponentContainers())->map(
         fn($container) => $container->getComponents(),
     );
@@ -87,14 +80,18 @@
     @endphp
 
     <div
-        {{ $attributes->merge(
+        {{ $attributes
+            ->merge(
                 [
                     'id' => $getId(),
                     'wire:key' => $getLivewireKey() . '.container',
                 ],
                 escape: false,
-            )->merge($getExtraAttributes(), escape: false)->class(['fi-sc-tabs', 'fi-contained' => $isContained, 'fi-vertical' => $isVertical]) }}>
-        <x-filament::tabs :contained="$isContained"  class="mb-4" :label="$label" :vertical="$isVertical">
+            )
+            ->merge($getExtraAttributes(), escape: false)
+            ->class(['fi-sc-tabs', 'fi-contained' => $isContained, 'fi-vertical' => $isVertical]) 
+        }}>
+        <x-filament::tabs :contained="$isContained" :label="$label" :vertical="$isVertical">
             @foreach ($getStartRenderHooks() as $startRenderHook)
                 {{ \Filament\Support\Facades\FilamentView::renderHook($startRenderHook, scopes: $renderHookScopes) }}
             @endforeach
@@ -126,7 +123,11 @@
         </x-filament::tabs>
 
         @foreach ($tabs as $tabKey => $tab)
-            <div class="p-4">
+            <div @class([
+                'translate-field-tab',
+                'translate-field-tab-active' => $activeTab === strval($tabKey),
+                'translate-field-tab-inactive' => $activeTab !== strval($tabKey),
+            ])>
                 {{ $tab->key($tabKey) }}
             </div>
         @endforeach

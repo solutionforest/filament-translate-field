@@ -1,0 +1,17 @@
+@reference "tailwindcss";
+
+.translate-field-tab-inactive {
+    @apply invisible h-0 overflow-y-hidden p-0;
+}
+
+.fi-contained .translate-field-tab-active {
+    @apply p-6;
+}
+
+.fi-sc-tabs:not(.fi-contained) .translate-field-tab-active {
+    @apply mt-6;
+}
+
+@source '../views/**/*.blade.php';
+@source '../../vendor/filament/schemas/resources/views/components/tabs.blade.php';
+@source '../../vendor/filament/schemas/resources/views/components/tabs/*.blade.php';

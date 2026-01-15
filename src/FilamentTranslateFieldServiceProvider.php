@@ -43,8 +43,8 @@ class FilamentTranslateFieldServiceProvider extends PackageServiceProvider
      */
     protected function getAssets(): array
     {
-        return [
+        return collect([
             Css::make('filament-translate-field-styles', __DIR__ . '/../resources/dist/filament-translate-fields.css'),
-        ];
+        ])->filter(fn (Asset $asset) => file_exists($asset->getPath()))->values()->toArray();
     }
 }

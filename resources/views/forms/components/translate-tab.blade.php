@@ -2,21 +2,11 @@
     $id = $getId();
     $isContained = $getContainer()->getParentComponent()->isContained();
 
-    $activeTabClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-active',
-        'p-6' => $isContained,
-        'mt-6' => ! $isContained,
-    ]);
-
-    $inactiveTabClasses = 'invisible h-0 overflow-hidden p-0';
-
-    $actions = $getActions();
-    $hasActions = filled($actions);
-
-    $locale = $getLocale() ?? $id;
+    $activeTabClasses = 'fi-active translate-field-tab translate-field-tab-active';
+    $inactiveTabClasses = 'translate-field-tab translate-field-tab-inactive';
 @endphp
 
-<div
+<div 
     x-bind:class="{
         @js($activeTabClasses): tab === @js($id),
         @js($inactiveTabClasses): tab !== @js($id),
@@ -35,17 +25,5 @@
             ->class(['fi-fo-tabs-tab outline-none'])
     }}
 >
-
-    @if ($hasActions)
-        <div class="flex justify-end">
-            @foreach ($actions as $action)
-                @if (($action)(['locale' => $locale])->isVisible())
-                    {{ ($action)(['locale' => $locale]) }}
-                @endif
-            @endforeach
-        </div>
-    @endif
-    <div>
-        {{ $getChildComponentContainer() }}
-    </div>
+    {{ $getChildComponentContainer() }}
 </div>
