@@ -2,6 +2,34 @@
 
 All notable changes to `filament-translate-field` will be documented in this file.
 
+## 3.0.0 - 2026-02-02
+
+### v4.0.0 Release
+
+This major release upgrades the Filament Translate Field Plugin to support Filament v5, bringing enhanced compatibility and new features aligned with the latest Filament framework.
+
+#### What's New
+
+- Full compatibility with Filament v5
+- Improved performance and stability
+- Updated dependencies to match Filament v5 requirements
+
+#### Breaking Changes
+
+- Minimum required Filament version is now v5.0
+
+#### How to Upgrade
+
+1. Update your `composer.json` to require `"solution-forest/filament-translate-field": "^4.0"`
+2. Run `composer update`
+3. Publish updated assets: `php artisan filament:assets`
+4. If using custom themes, update your `tailwind.config.js` with the new asset paths
+5. Test your tree widgets/pages for any custom overrides that may need adjustment
+
+For full details, see the [commit changes](https://github.com/solutionforest/filament-translate-field/commit/15a896fd081e525afc66e241544268c1577ede2d). If you encounter issues, please check the [documentation](https://github.com/solutionforest/filament-translate-field#readme) or open an issue.
+
+**Full Changelog**: https://github.com/solutionforest/filament-translate-field/compare/2.1.0...3.0.0
+
 ## 2.1.0 - 2026-01-15
 
 ### 🎉 What's New
