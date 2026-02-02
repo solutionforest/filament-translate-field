@@ -13,6 +13,7 @@ Filament Translate Field is a library for Filament CMS that simplifies managing 
 | ---------------- | -------------------------------- |
 | v3.x             | v0.x – v1.x                      |
 | v4.x             | v2.x                             |
+| v5.x             | v3.x                             |
 
 You can install the package via composer:
 
