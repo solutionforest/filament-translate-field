@@ -24,6 +24,7 @@
         x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('tabs', 'filament/schemas') }}"
         x-data="tabsSchemaComponent({
             activeTab: @js($activeTab),
+            isScrollable: @js(true),
             isTabPersistedInQueryString: @js($isTabPersistedInQueryString()),
             livewireId: @js($this->getId()),
             tab: @if ($isTabPersisted() && filled($persistenceKey = $getKey())) $persist(null).as('tabs-{{ $persistenceKey }}') @else @js(null) @endif,
