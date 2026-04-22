@@ -8,10 +8,10 @@
         "laravel-translatable",
         "filament-translate-field"
     ],
-    "homepage": "https://github.com/solution-forest/filament-translate-field",
+    "homepage": "https://github.com/solutionforest/filament-translate-field",
     "support": {
-        "issues": "https://github.com/solution-forest/filament-translate-field/issues",
-        "source": "https://github.com/solution-forest/filament-translate-field"
+        "issues": "https://github.com/solutionforest/filament-translate-field/issues",
+        "source": "https://github.com/solutionforest/filament-translate-field"
     },
     "license": "MIT",
     "authors": [
@@ -23,14 +23,14 @@
     ],
     "require": {
         "php": "^8.2",
-        "filament/filament": "^4.0"
+        "filament/filament": "^5.0"
     },
     "require-dev": {
         "laravel/pint": "^1.0",
         "orchestra/testbench": "^9.14",
-        "pestphp/pest": "^3.0",
-        "pestphp/pest-plugin-arch": "^3.0",
-        "pestphp/pest-plugin-laravel": "^3.0",
+        "pestphp/pest": "^3.0|^4.0",
+        "pestphp/pest-plugin-arch": "^3.0|^4.0",
+        "pestphp/pest-plugin-laravel": "^3.0|^4.0",
         "larastan/larastan": "^3.6"
     },
     "autoload": {
