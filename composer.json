@@ -8,10 +8,10 @@
         "laravel-translatable",
         "filament-translate-field"
     ],
-    "homepage": "https://github.com/solution-forest/filament-translate-field",
+    "homepage": "https://github.com/solutionforest/filament-translate-field",
     "support": {
-        "issues": "https://github.com/solution-forest/filament-translate-field/issues",
-        "source": "https://github.com/solution-forest/filament-translate-field"
+        "issues": "https://github.com/solutionforest/filament-translate-field/issues",
+        "source": "https://github.com/solutionforest/filament-translate-field"
     },
     "license": "MIT",
     "authors": [
