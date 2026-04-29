@@ -2,6 +2,14 @@
 
 All notable changes to `filament-translate-field` will be documented in this file.
 
+## 2.1.1 - 2026-04-29
+
+### What's Changed
+
+* Bump aglipanci/laravel-pint-action from 2.5 to 2.6 by @dependabot[bot] in https://github.com/solutionforest/filament-translate-field/pull/19
+
+**Full Changelog**: https://github.com/solutionforest/filament-translate-field/compare/3.0.0...2.1.1
+
 ## 3.0.0 - 2026-02-02
 
 ### v4.0.0 Release
