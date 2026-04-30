@@ -1,6 +1,7 @@
 @php
     $id = $getId();
     $key = $getKey(isAbsolute: false);
+    
     $tabs = $getContainer()->getParentComponent();
     $isContained = $tabs->isContained();
     $livewireProperty = $tabs->getLivewireProperty();
@@ -33,7 +34,7 @@
         >
             {{ $childSchema }}
         </div>
-    @elseif (strval($this->{$livewireProperty}) === strval($key))
+    @elseif (strval($this->{$livewireProperty}) === strval($getLocale()))
         <div
             {{
                 $attributes
