@@ -2,6 +2,14 @@
 
 All notable changes to `filament-translate-field` will be documented in this file.
 
+## 2.1.2 - 2026-04-30
+
+### 🐛 Bug Fixes
+
+- **Fixed vertical layout rendering when `isVertical()` is `true`** — Tab panels and navigation were not displaying correctly in vertical orientation. The wrapper layout now properly supports side-by-side tab navigation and content when vertical mode is enabled.
+
+**Full Changelog**: https://github.com/solutionforest/filament-translate-field/compare/2.1.1...2.1.2
+
 ## 3.0.1 - 2026-04-29
 
 ### What's Changed
