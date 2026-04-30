@@ -115,9 +115,17 @@
                 escape: false,
             )
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['fi-sc-tabs', 'fi-contained' => $isContained, 'fi-vertical' => $isVertical]) 
+            ->class([
+                'fi-sc-tabs', 
+                'fi-contained' => $isContained,
+                'fi-vertical' => $isVertical,
+            ]) 
         }}>
-        <x-filament::tabs :contained="$isContained" :label="$label" :vertical="$isVertical">
+        <x-filament::tabs 
+            :contained="$isContained" 
+            :label="$label" 
+            :vertical="$isVertical"
+        >
             @foreach ($getStartRenderHooks() as $startRenderHook)
                 {{ \Filament\Support\Facades\FilamentView::renderHook($startRenderHook, scopes: $renderHookScopes) }}
             @endforeach
@@ -135,11 +143,19 @@
                     $tabKey = strval($tabKey);
                 @endphp
 
-                <x-filament::tabs.item :active="$activeTab === $tabKey" :badge="$tabBadge" :badge-color="$tabBadgeColor" :badge-icon="$tabBadgeIcon"
-                    :badge-icon-position="$tabBadgeIconPosition" :badge-tooltip="$tabBadgeTooltip" :icon="$tabIcon" :icon-position="$tabIconPosition"
+                <x-filament::tabs.item 
+                    :active="$activeTab === $tabKey" 
+                    :badge="$tabBadge" 
+                    :badge-color="$tabBadgeColor" 
+                    :badge-icon="$tabBadgeIcon"
+                    :badge-icon-position="$tabBadgeIconPosition" 
+                    :badge-tooltip="$tabBadgeTooltip" 
+                    :icon="$tabIcon" 
+                    :icon-position="$tabIconPosition"
                     :wire:click="'$set(\'' . $livewireProperty . '\', ' . (filled($tabKey) ? ('\'' . $tabKey . '\'') : 'null') . ')'"
-                    :attributes="$tabExtraAttributeBag">
-                    {{ $tab->getLabel() ?? $this->generateTabLabel($tabKey) }}
+                    :attributes="$tabExtraAttributeBag"
+                >
+                    {{ $tab->getLabel() }}
                 </x-filament::tabs.item>
             @endforeach
 
@@ -149,13 +165,7 @@
         </x-filament::tabs>
 
         @foreach ($tabs as $tabKey => $tab)
-            <div @class([
-                'translate-field-tab',
-                'translate-field-tab-active' => $activeTab === strval($tabKey),
-                'translate-field-tab-inactive' => $activeTab !== strval($tabKey),
-            ])>
-                {{ $tab->key($tabKey) }}
-            </div>
+            {{ $tab->locale($tabKey)->key($tabKey) }}
         @endforeach
     </div>
 @endif
