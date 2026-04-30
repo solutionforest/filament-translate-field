@@ -2,6 +2,14 @@
 
 All notable changes to `filament-translate-field` will be documented in this file.
 
+## 3.0.3 - 2026-04-30
+
+### 🐛 Bug Fixes
+
+- **fix: vertical layout not applied when `livewireProperty` is set** - When `livewireProperty` was configured, the `fi-vertical` class and `:vertical` prop were not correctly applied to the tabs container, causing vertical tab styling to be ignored.
+
+**Full Changelog**: https://github.com/solutionforest/filament-translate-field/compare/3.0.2...3.0.3
+
 ## 3.0.2 - 2026-04-30
 
 ### 🐛 Bug Fixes
