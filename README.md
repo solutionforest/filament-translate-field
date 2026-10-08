@@ -3,19 +3,17 @@
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/solution-forest/filament-translate-field.svg?style=flat-square)](https://packagist.org/packages/solution-forest/filament-translate-field)
 [![Total Downloads](https://img.shields.io/packagist/dt/solution-forest/filament-translate-field.svg?style=flat-square)](https://packagist.org/packages/solution-forest/filament-translate-field)
 
-
 Filament Translate Field is a library for Filament CMS that simplifies managing multiple translatable fields in different languages.
 
 ![filament-translate-field-1](https://github.com/solutionforest/filament-translate-field/assets/68525320/34c74a8f-fd8e-4db6-a967-31deecdf113b)
 
-
 ## Installation
 
 | Filament Version | Filament Translate Field Version |
-|------------------|---------------------------|
-| v3.x             | v0.x – v1.x               |
-| v4.x             | v2.x
-
+| ---------------- | -------------------------------- |
+| v3.x             | v0.x – v1.x                      |
+| v4.x             | v2.x                             |
+| v5.x             | v3.x                             |
 
 You can install the package via composer:
 
@@ -28,49 +26,88 @@ Publish the assets:
 ```bash
 php artisan filament:assets
 ```
+
 ```bash
 php artisan optimize
 ```
 
 ## Important
 
-- There is a conflict with the `Translatable` trait in the [filament/spatie-laravel-translatable-plugin](https://filamentphp.com/plugins/filament-spatie-translatable) library when used on the EditPage. It is advised not to utilize the `Translatable` while editing.
-
+-   There's a conflict with the Translatable trait in the [filament/spatie-laravel-translatable-plugin](https://filamentphp.com/plugins/filament-spatie-translatable) when used on the EditPage. Avoid using Translatable while editing.
 
 ## Configuration:
 
-- Define the `translatable` fields in your model using the translatable package of your choice, such as "spatie/laravel-translatabl" or "dimsav/laravel-translatable".
-- Configure the translatable fields in the model's *$translatable* property, specifying the translatable attributes.
+-   Define translatable fields in your model using a translatable package (e.g., "spatie/laravel-translatable" or "dimsav/laravel-translatable").
+-   Configure translatable fields in the model's _$translatable_ property.
 
-## Adding the plugin to a panel
-To add a plugin to a panel, you must include it in the configuration file using the plugin() method:
-```php
-use SolutionForest\FilamentTranslateField\FilamentTranslateFieldPlugin;
+## Setup
+
+<details>
+ <summary><b>For version before 1.x.x</b></summary>
+  <h3> Adding the plugin to a panel</h3>
+  
+ <p>To add a plugin to a panel, you must include it in the configuration file using the plugin() method:</p>
  
-public function panel(Panel $panel): Panel
-{
-    return $panel
-        // ...
-        ->plugin(FilamentTranslateFieldPlugin::make());
-}
+  ```php
+  use SolutionForest\FilamentTranslateField\FilamentTranslateFieldPlugin;
+   
+  public function panel(Panel $panel): Panel
+  {
+      return $panel
+          // ...
+          ->plugin(FilamentTranslateFieldPlugin::make());
+  }
+  ```
+  
+ <h3> Setting the default translatable locales </h3>
+ 
+  <p>To set up the locales that can be used to translate content, you can pass an array of locales to the `defaultLocales()` plugin method:</p>
+  
+  ```php
+  use SolutionForest\FilamentTranslateField\FilamentTranslateFieldPlugin;
+   
+  public function panel(Panel $panel): Panel
+  {
+      return $panel
+          // ...
+          ->plugin(
+              FilamentTranslateFieldPlugin::make()
+                 ->defaultLocales(['en', 'es', 'fr']),
+          );
+  }
+  ```
+</details>
+
+<details open>
+ <summary><b>For version equal or after 1.x.x</b></summary>
+ 
+ <h3> Setting the default translatable locales </h3>
+
+ <p>Since the plugin after 1.x.x is a standalone plugin, which does not need to be related to Filament Panel, so you need to globally set it up in the config file or use the boot method in `AppServiceProvider`.</p>
+  <p>To set up the locales that can be used to translate content, you can pass an array of locales to the `defaultLocales()` plugin method:</p>
+  
+  ```php
+  use SolutionForest\FilamentTranslateField\Facades\FilamentTranslateField;
+   
+  class AppServiceProvider extends ServiceProvider
+ {
+     public function boot(): void
+     {
+         FilamentTranslateField::defaultLocales(['en', 'es', 'fr']);
+     }
+ }
+  ```
+
+Or, you can publish configuration file `config/filament-translate-field.php` and add default locales on `locales`:
+
+```php
+
+return [
+    'locales' => ['en', 'es', 'fr'],
+];
 ```
 
-## Setting the default translatable locales
-To set up the locales that can be used to translate content, you can pass an array of locales to the `defaultLocales()` plugin method:
-
-```php
-use SolutionForest\FilamentTranslateField\FilamentTranslateFieldPlugin;
- 
-public function panel(Panel $panel): Panel
-{
-    return $panel
-        // ...
-        ->plugin(
-            FilamentTranslateFieldPlugin::make()
-               ->defaultLocales(['en', 'es', 'fr']),
-        );
-}
-```
+</details>
 
 ## Usage
 
@@ -86,12 +123,12 @@ use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
 
 Translate::make()
     ->schema([
-        // ...
+         // Your form fields here
     ])
 ```
 
-
 #### Setting the translatable locales for a particular fields
+
 By default, the translatable locales can be set globally for all translate form component in the plugin configuration. Alternatively, you can customize the translatable locales for a particular resource by overriding the `locales()` method in `Translate` class:
 
 ```php
@@ -111,7 +148,7 @@ use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
 
  Translate::make()
     ->schema([
-        // ...
+        // Fields
     ])
     ->fieldTranslatableLabel(fn ($field, $locale) => __($field->getName(), locale: $locale))
 ```
@@ -125,20 +162,19 @@ use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
 
 Translate::make()
     ->schema([
-        // ...
+        // Fields
     ])
     ->prefixLocaleLabel()
     ->suffixLocaleLabel()
 ```
 
 > `prefixLocaleLabel:
-> 
+>
 > ![filament-translate-field-3](https://github.com/solutionforest/filament-translate-field/assets/68525320/0203e682-f324-4957-8680-4cffccab300c)
 
 > `suffixLocaleLabel`:
-> 
+>
 > ![filament-translate-field-4](https://github.com/solutionforest/filament-translate-field/assets/68525320/7f4403e9-c857-4ebf-b022-8fed12094426)
-
 
 #### Setting the locale display name
 
@@ -174,9 +210,7 @@ Translate::make()
 
 ![filament-translate-field-5](https://github.com/solutionforest/filament-translate-field/assets/68525320/a88fcb69-a63d-43a6-857b-5323df877134)
 
-
-
-### Adding action 
+### Adding action
 
 You may add actions before each container of children components using the `actions()` method:
 
@@ -190,8 +224,8 @@ Translate::make()
         Action::make('fillDumpTitle')
     ])
 ```
-> *If have multiple `Translate` components and have action in each component, please add id to `Translate` component by `id()` method*
 
+> _If have multiple `Translate` components and have action in each component, please add id to `Translate` component by `id()` method_
 
 #### Injecting the locale on current child container
 
@@ -212,7 +246,6 @@ Translate::make()
     ])
 ```
 
-
 ### Injecting the locale to form field
 
 If you wish to access the current locale instance for the field, define a `$locale` parameter:
@@ -227,13 +260,58 @@ Translate::make()
 ```
 
 ### Removing the styled container
+
 By default, translate component and their content are wrapped in a container styled as a card. You may remove the styled container using `contained()`:
 
 ```php
 use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
- 
+
 Translate::make()
     ->contained(false)
+```
+
+### Exclude
+
+The `exclude` feature allows you to specify fields that you don't want to be included in the translation process. This can be useful for fields that contain dynamic content or that shouldn't be translated into other languages.
+
+```php
+use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
+
+Translate::make([
+        Forms\Components\TextInput::make('title'),
+        Forms\Components\TextInput::make('description'),
+    ])
+    ->exclude(['description'])
+```
+
+Without exclude
+
+```json
+{
+    "title": {
+        "en": "Dump",
+        "es": "Dump",
+        "fr": "Dump"
+    },
+    "description": {
+        "en": null,
+        "es": null,
+        "fr": null
+    }
+}
+```
+
+With Exclude
+
+```json
+{
+    "title": {
+        "en": "Dump",
+        "es": "Dump",
+        "fr": "Dump"
+    },
+    "description": null
+}
 ```
 
 ## Publishing Views
@@ -244,21 +322,27 @@ To publish the views, use:
 php artisan vendor:publish --provider="SolutionForest\\FilamentTranslateField\\FilamentTranslateFieldServiceProvider" --tag="filament-translate-field-views"
 ```
 
+## Publishing Configuration file
+
+To publish the configuration file, use:
+
+```bash
+php artisan vendor:publish --provider="SolutionForest\\FilamentTranslateField\\FilamentTranslateFieldServiceProvider" --tag="filament-translate-field-config"
+```
+
 ## Example
 
 ### Demo
 
-
 https://github.com/solutionforest/filament-translate-field/assets/68525320/b088d632-2df5-4594-b91c-56b708425e41
-
-
 
 ### Sample Code
 
 In Filament panel:
+
 ```php
 use SolutionForest\FilamentTranslateField\FilamentTranslateFieldPlugin;
- 
+
 public function panel(Panel $panel): Panel
 {
     return $panel
@@ -270,7 +354,9 @@ public function panel(Panel $panel): Panel
 ```
 
 In app/Filament/Resources/NewsResource.php:
+
 ```php
+use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\RichEditor;
@@ -280,7 +366,7 @@ use SolutionForest\FilamentTranslateField\Forms\Component\Translate;
 class NewsResource extends Resource
 {
     // ...
-    
+
     public static function form(Form $form): Form
     {
         return $form
@@ -289,13 +375,13 @@ class NewsResource extends Resource
                     ->columnSpanFull()
                     ->columns(2)
                     ->schema([
-                        TextInput::make('title')->required(), 
+                        TextInput::make('title')->required(),
                         Textarea::make('short_desc'),
-                       RichEditor::make('description')->columnSpanFull(),
+                        RichEditor::make('description')->columnSpanFull(),
                     ])
                     ->fieldTranslatableLabel(fn ($field, $locale) => __($field->getName(), locale: $locale))
                     ->actions([
-                        Forms\Components\Actions\Action::make('testy')
+                        Forms\Components\Actions\Action::make('test')
                             ->label("Fill dump title")
                             ->visible(fn ($arguments) => $arguments['locale']  == 'en')
                             ->action(function ($set, $arguments) {
@@ -308,26 +394,55 @@ class NewsResource extends Resource
                     ]),
             ]);
     }
-    
+
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\Layout\Panel::make([
-                    Tables\Columns\TextColumn::make('data')
-                        ->getStateUsing(fn ($record) => $record->setVisible(['title', 'short_desc', 'description'])->toJson()),
-                ]),
+
+                Tables\Columns\ColumnGroup::make('Data')
+                    ->columns([
+                        Tables\Columns\TextColumn::make('title')
+                            ->getStateUsing(fn ($record) => new HtmlString(collect($record->title)
+                                ->map(fn ($state, $locale) => <<<Html
+                                    <div class="flex gap-2">
+                                        <div class="text-sm text-gray-500">$locale</div>
+                                        <div>$state</div>
+                                    </div>
+                                Html)
+                                ->implode(''))),
+                        Tables\Columns\TextColumn::make('short_desc')
+                            ->getStateUsing(fn ($record) => new HtmlString(collect($record->short_desc)
+                                ->map(fn ($state, $locale) => <<<Html
+                                    <div class="flex gap-2">
+                                        <div class="text-sm text-gray-500">$locale</div>
+                                        <div>$state</div>
+                                    </div>
+                                Html)
+                                ->implode(''))),
+                        Tables\Columns\TextColumn::make('description')
+                            ->getStateUsing(fn ($record) => new HtmlString(collect($record->description)
+                                ->map(fn ($state, $locale) => <<<Html
+                                    <div class="flex gap-2">
+                                        <div class="text-sm text-gray-500">$locale</div>
+                                        <div>$state</div>
+                                    </div>
+                                Html)
+                                ->implode(''))),
+                    ]),
+            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ]);
     }
-    
+
     // ...
 }
 ```
 
 In app/Models/News.php:
+
 ```php
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
@@ -341,11 +456,18 @@ class News extends Model
 
     public $translatable = ['title', 'short_desc', 'description'];
 
+    public $casts = [
+        'title' => 'json',
+        'short_desc' => 'json',
+        'description' => 'json',
+    ];
+
     // ...
 }
 ```
 
-In resources/lang/en.json: 
+In resources/lang/en.json:
+
 ```json
 {
     "title": "Title",
@@ -354,7 +476,8 @@ In resources/lang/en.json:
 }
 ```
 
-In resources/lang/es.json: 
+In resources/lang/es.json:
+
 ```json
 {
     "title": "Título",
@@ -363,7 +486,8 @@ In resources/lang/es.json:
 }
 ```
 
-In resources/lang/fr.json: 
+In resources/lang/fr.json:
+
 ```json
 {
     "title": "Titre",
@@ -376,22 +500,22 @@ In the given example, when you save the model, the data will be stored in the fo
 
 ```json
 {
-  "id": 1,
-  "title": {
-    "en": "Dump",
-    "es": "Dump",
-    "fr": "Dump"
-  },
-  "short_desc": {
-    "en": null,
-    "es": null,
-    "fr": null
-  },
-  "description": {
-    "en": null,
-    "es": null,
-    "fr": null
-  }
+    "id": 1,
+    "title": {
+        "en": "Dump",
+        "es": "Dump",
+        "fr": "Dump"
+    },
+    "short_desc": {
+        "en": null,
+        "es": null,
+        "fr": null
+    },
+    "description": {
+        "en": null,
+        "es": null,
+        "fr": null
+    }
 }
 ```
 
@@ -415,23 +539,21 @@ If you discover any security related issues, please email info+package@solutionf
 
 ## Credits
 
-- [Carly]
-- [All Contributors](../../contributors)
+-   [Carly]
+-   [All Contributors](../../contributors)
 
 ## License
 
 Filament Tree is open-sourced software licensed under the [MIT license](LICENSE.md).
 
-
-<p align="center"><a href="https://solutionforest.com" target="_blank"><img src="https://github.com/solutionforest/.github/blob/main/docs/images/sf.png?raw=true" width="200"></a></p>
-
+<p align="center"><a href="https://solutionforest.com" target="_blank"><img src="https://github.com/solutionforest/.github/blob/main/docs/images/sf.png?raw=true" width="150"></a></p>
 
 ## About Solution Forest
 
-[Solution Forest](https://solutionforest.com) Web development agency based in Hong Kong. We help customers to solve their problems. We Love Open Soruces. 
+[Solution Forest](https://solutionforest.com) Web development agency based in Hong Kong. We help customers to solve their problems. We Love Open Sources.
 
 We have built a collection of best-in-class products:
 
-- [VantagoAds](https://vantagoads.com): A self manage Ads Server, Simplify Your Advertising Strategy.
-- [GatherPro.events](https://gatherpro.events): A Event Photos management tools, Streamline Your Event Photos.
-- [Website CMS Management](https://filamentphp.com/plugins/solution-forest-cms-website): Website CMS Management
+-   [InspireCMS](https://inspirecms.net): A full-featured Laravel CMS with everything you need out of the box. Build smarter, ship faster with our complete content management solution.
+-   [Filaletter](https://filaletter.solutionforest.net): Filaletter - Filament Newsletter Plugin
+-   [Website CMS Management](https://filamentphp.com/plugins/solution-forest-cms-website): A hands-on Filament CMS plugin for those who prefer more manual control over their website content management.

@@ -2,10 +2,13 @@
 
 namespace SolutionForest\FilamentTranslateField;
 
+use Filament\Support\Assets\Asset;
+use Filament\Support\Assets\Css;
+use Filament\Support\Facades\FilamentAsset;
 use Livewire\Features\SupportTesting\Testable;
+use SolutionForest\FilamentTranslateField\Testing\TestsFilamentTranslateField;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use SolutionForest\FilamentTranslateField\Testing\TestsFilamentTranslateField;
 
 class FilamentTranslateFieldServiceProvider extends PackageServiceProvider
 {
@@ -15,12 +18,33 @@ class FilamentTranslateFieldServiceProvider extends PackageServiceProvider
     {
         $package
             ->name(static::$name)
-            ->hasViews();
+            ->hasViews()
+            ->hasConfigFile();
     }
 
     public function packageBooted(): void
     {
+        FilamentAsset::register(
+            $this->getAssets(),
+            $this->getAssetPackageName()
+        );
+
         // Testing
-        Testable::mixin(new TestsFilamentTranslateField());
+        Testable::mixin(new TestsFilamentTranslateField);
+    }
+
+    protected function getAssetPackageName(): ?string
+    {
+        return 'solution-forest/filament-translate-field';
+    }
+
+    /**
+     * @return array<Asset>
+     */
+    protected function getAssets(): array
+    {
+        return collect([
+            Css::make('filament-translate-field-styles', __DIR__ . '/../resources/dist/filament-translate-fields.css'),
+        ])->filter(fn (Asset $asset) => file_exists($asset->getPath()))->values()->toArray();
     }
 }

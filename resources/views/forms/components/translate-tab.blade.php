@@ -1,51 +1,54 @@
 @php
     $id = $getId();
-    $isContained = $getContainer()->getParentComponent()->isContained();
+    $key = $getKey(isAbsolute: false);
+    
+    $tabs = $getContainer()->getParentComponent();
+    $isContained = $tabs->isContained();
+    $livewireProperty = $tabs->getLivewireProperty();
 
-    $activeTabClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-active',
-        'p-6' => $isContained,
-        'mt-6' => ! $isContained,
-    ]);
+    $activeTabClasses = 'fi-active translate-field-tab translate-field-tab-active';
+    $inactiveTabClasses = 'translate-field-tab translate-field-tab-inactive';
 
-    $inactiveTabClasses = 'invisible h-0 overflow-y-hidden p-0';
-
-    $actions = $getActions();
-    $hasActions = filled($actions);
-
-    $locale = $getLocale() ?? $id;
+    $childSchema = $getChildSchema();
 @endphp
 
-<div
-    x-bind:class="{
-        @js($activeTabClasses): tab === @js($id),
-        @js($inactiveTabClasses): tab !== @js($id),
-    }"
-    x-on:expand="tab = @js($id)"
-    {{
-        $attributes
-            ->merge([
-                'aria-labelledby' => $id,
-                'id' => $id,
-                'role' => 'tabpanel',
-                'tabindex' => '0',
-                'wire:key' => "{$this->getId()}.{$getStatePath()}." . \SolutionForest\FilamentTranslateField\Forms\Component\Translate::class . ".tabs.{$id}",
-            ], escape: false)
-            ->merge($getExtraAttributes(), escape: false)
-            ->class(['fi-fo-tabs-tab outline-none'])
-    }}
->
-
-    @if ($hasActions)
-        <div class="flex justify-end">
-            @foreach ($actions as $action)
-                @if (($action)(['locale' => $locale])->isVisible())
-                    {{ ($action)(['locale' => $locale]) }}
-                @endif
-            @endforeach
+@if (! empty($childSchema->getComponents()))
+    @if (blank($livewireProperty))
+        <div
+            x-bind:class="{
+                @js($activeTabClasses): tab === @js($key),
+                @js($inactiveTabClasses): tab !== @js($key),
+            }"
+            x-on:expand="tab = @js($key)"
+            {{
+                $attributes
+                    ->merge([
+                        'aria-labelledby' => $id,
+                        'id' => $id,
+                        'role' => 'tabpanel',
+                        'wire:key' => $getLivewireKey() . '.container',
+                    ], escape: false)
+                    ->merge($getExtraAttributes(), escape: false)
+                    ->class(['fi-sc-tabs-tab'])
+            }}
+        >
+            {{ $childSchema }}
+        </div>
+    @elseif (strval($this->{$livewireProperty}) === strval($getLocale()))
+        <div
+            {{
+                $attributes
+                    ->merge([
+                        'aria-labelledby' => $id,
+                        'id' => $id,
+                        'role' => 'tabpanel',
+                        'wire:key' => $getLivewireKey() . '.container',
+                    ], escape: false)
+                    ->merge($getExtraAttributes(), escape: false)
+                    ->class(['fi-sc-tabs-tab fi-active', $activeTabClasses])
+            }}
+        >
+            {{ $childSchema }}
         </div>
     @endif
-    <div>
-        {{ $getChildComponentContainer() }}
-    </div>
-</div>
+@endif

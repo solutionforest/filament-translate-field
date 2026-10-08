@@ -1,121 +1,171 @@
 @php
-    use Illuminate\Support\Arr;
     use SolutionForest\FilamentTranslateField\Forms\Component\Translate\Tab;
 
+    $activeTab = $getActiveTab();
+    $isContained = $isContained();
+    $isVertical = $isVertical();
+    $label = $getLabel();
+    $livewireProperty = $getLivewireProperty();
+    $renderHookScopes = $getRenderHookScopes();
     $locales = $getLocales() ?? [];
     $defaultLocale = $locales[0] ?? null;
-    
-    $isContained = $isContained();
 
-    $visibleTabClasses = \Illuminate\Support\Arr::toCssClasses([
-        'p-6' => $isContained,
-        'mt-6' => ! $isContained,
-    ]);
+    $childComponentsWithLocale = collect($getChildComponentContainers())->map(
+        fn($container) => $container->getComponents(),
+    );
+    $tabs = collect($childComponentsWithLocale)->map(
+        fn($components) => Arr::first($components, fn($component) => $component instanceof Tab),
+    );
 
-    $invisibleTabClasses = 'invisible h-0 overflow-y-hidden p-0';
-
-    $childComponentsWithLocale = collect($getChildComponentContainers())
-        ->map(fn ($container) => $container->getComponents());
-    $tabs = collect($childComponentsWithLocale)
-        ->map(fn ($components) => Arr::first($components, fn ($component) => $component instanceof Tab));
-
-    $livewireKey = "{$this->getId()}.{$getStatePath()}." . \SolutionForest\FilamentTranslateField\Forms\Component\Translate::class . '.container';
 @endphp
 
-<div 
-    wire:ignore.self
-    x-cloak
-    x-data="{ 
-        tab: @if ($isTabPersisted() && filled($persistenceId = $getId())) $persist(null).as('tabs-{{ $persistenceId }}') @else null @endif,
-        
-        getTabs: function () {
-            if (! this.$refs.tabsData) {
-                return []
-            }
-
-            return JSON.parse(this.$refs.tabsData.value)
-        },
-
-        updateQueryString: function () {
-            if (! @js($isTabPersistedInQueryString())) {
-                return
-            }
-
-            const url = new URL(window.location.href)
-            url.searchParams.set(@js($getTabQueryStringKey()), this.tab)
-
-            history.pushState(null, document.title, url.toString())
-        },
-    }"
-    x-init="() => { 
-        $watch('tab', () => updateQueryString())
-
-        const tabs = getTabs()
-
-        if (! tab || ! tabs.includes(tab)) {
-            tab = tabs[@js($getActiveTab()) - 1]
-        }
-
-        Livewire.hook('commit', ({ component, commit, succeed, fail, respond }) => {
-            succeed(({ snapshot, effect }) => {
-                $nextTick(() => {
-                    if (component.id !== @js($getId())) {
-                        return
-                    }
-
-                    const tabs = getTabs()
-
-                    if (! tabs.includes(tab)) {
-                        tab = tabs[@js($getActiveTab()) - 1]
-                    }
-                })
-            })
-        })
-    }"
-    {{
-        $attributes
-            ->merge([
-                'id' => $getId(),
-                'wire:key' => $livewireKey,
-            ], escape: false)
+@if (blank($livewireProperty))
+    <div x-load
+        x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('tabs', 'filament/schemas') }}"
+        wire:ignore.self
+        x-data="tabsSchemaComponent({
+            activeTab: @js($activeTab),
+            isScrollable: @js(true),
+            isTabPersistedInQueryString: @js($isTabPersistedInQueryString()),
+            livewireId: @js($this->getId()),
+            tab: @if ($isTabPersisted() && filled($persistenceKey = $getKey())) $persist(null).as('tabs-{{ $persistenceKey }}') @else @js(null) @endif,
+            tabQueryStringKey: @js($getTabQueryStringKey()),
+        })" 
+        {{ $attributes->merge(
+                [
+                    'id' => $getId(),
+                    'wire:key' => $getLivewireKey() . '.container',
+                ],
+                escape: false,
+            )
             ->merge($getExtraAttributes(), escape: false)
             ->merge($getExtraAlpineAttributes(), escape: false)
             ->class([
-                'fi-fo-translate flex flex-col',
-                'fi-contained rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10' => $isContained,
-            ])
-    }}
->
-    <input
-        type="hidden"
-        value="{{
-            collect($tabs)
-                ->map(static fn ($tab) => $tab?->getId())
-                ->values()
-                ->toJson()
-        }}"
-        x-ref="tabsData"
-    />
-    <x-filament::tabs :contained="$isContained" :label="$getLabel()">
+                'fi-sc-tabs', 
+                'fi-contained' => $isContained, 
+                'fi-vertical' => $isVertical,
+            ]) 
+        }}>
+        <input type="hidden"
+            value="{{ collect($tabs)->filter(static fn(Tab $tab): bool => $tab->isVisible())->map(static fn(Tab $tab) => $tab->getKey(isAbsolute: false))->values()->toJson() }}"
+            x-ref="tabsData" 
+        />
+
+        <x-filament::tabs 
+            :contained="$isContained" 
+            class="mb-4" 
+            :label="$label" 
+            :vertical="$isVertical" 
+            x-cloak
+        >
+            @foreach ($getStartRenderHooks() as $startRenderHook)
+                {{ \Filament\Support\Facades\FilamentView::renderHook($startRenderHook, scopes: $renderHookScopes) }}
+            @endforeach
+
+            @foreach ($tabs as $tab)
+                @php
+                    $tabKey = $tab->getKey(isAbsolute: false);
+                    $tabBadge = $tab->getBadge();
+                    $tabBadgeColor = $tab->getBadgeColor();
+                    $tabBadgeIcon = $tab->getBadgeIcon();
+                    $tabBadgeIconPosition = $tab->getBadgeIconPosition();
+                    $tabBadgeTooltip = $tab->getBadgeTooltip();
+                    $tabIcon = $tab->getIcon();
+                    $tabIconPosition = $tab->getIconPosition();
+                    $tabExtraAttributeBag = $tab->getExtraAttributeBag();
+                @endphp
+
+                <x-filament::tabs.item 
+                    :alpine-active="'tab === \'' . $tabKey . '\''" 
+                    :badge="$tabBadge" 
+                    :badge-color="$tabBadgeColor" 
+                    :badge-icon="$tabBadgeIcon"
+                    :badge-icon-position="$tabBadgeIconPosition" 
+                    :badge-tooltip="$tabBadgeTooltip" 
+                    :icon="$tabIcon" 
+                    :icon-position="$tabIconPosition"
+                    :x-on:click="'tab = \'' . $tabKey . '\''" 
+                    :attributes="$tabExtraAttributeBag"
+                >
+                    {{ $tab->getLabel() }}
+                </x-filament::tabs.item>
+            @endforeach
+
+            @foreach ($getEndRenderHooks() as $endRenderHook)
+                {{ \Filament\Support\Facades\FilamentView::renderHook($endRenderHook, scopes: $renderHookScopes) }}
+            @endforeach
+        </x-filament::tabs>
+
         @foreach ($tabs as $tab)
-            @php
-                $tabId = $tab->getId();
-            @endphp
-
-            <x-filament::tabs.item
-                :alpine-active="'tab === \'' . $tabId . '\''"
-                :badge="$tab->getBadge()"
-                :badge-color="$tab->getBadgeColor()"
-                :icon="$tab->getIcon()"
-                :icon-position="$tab->getIconPosition()"
-                :x-on:click="'tab = \'' . $tabId . '\''"
-            >
-                {{ $tab->getLabel() }}
-            </x-filament::tabs.item>
+            {{ $tab }}
         @endforeach
-    </x-filament::tabs>
+    </div>
+@else
+    @php
+        $activeTab = strval($this->{$livewireProperty});
+    @endphp
 
-    @foreach ($tabs as $locale => $tab)
-        {{ $tab }}
-    @endforeach
-</div>
+    <div
+        {{ $attributes
+            ->merge(
+                [
+                    'id' => $getId(),
+                    'wire:key' => $getLivewireKey() . '.container',
+                ],
+                escape: false,
+            )
+            ->merge($getExtraAttributes(), escape: false)
+            ->class([
+                'fi-sc-tabs', 
+                'fi-contained' => $isContained,
+                'fi-vertical' => $isVertical,
+            ]) 
+        }}>
+        <x-filament::tabs 
+            :contained="$isContained" 
+            :label="$label" 
+            :vertical="$isVertical"
+        >
+            @foreach ($getStartRenderHooks() as $startRenderHook)
+                {{ \Filament\Support\Facades\FilamentView::renderHook($startRenderHook, scopes: $renderHookScopes) }}
+            @endforeach
+
+            @foreach ($tabs as $tabKey => $tab)
+                @php
+                    $tabBadge = $tab->getBadge();
+                    $tabBadgeColor = $tab->getBadgeColor();
+                    $tabBadgeIcon = $tab->getBadgeIcon();
+                    $tabBadgeIconPosition = $tab->getBadgeIconPosition();
+                    $tabBadgeTooltip = $tab->getBadgeTooltip();
+                    $tabIcon = $tab->getIcon();
+                    $tabIconPosition = $tab->getIconPosition();
+                    $tabExtraAttributeBag = $tab->getExtraAttributeBag();
+                    $tabKey = strval($tabKey);
+                @endphp
+
+                <x-filament::tabs.item 
+                    :active="$activeTab === $tabKey" 
+                    :badge="$tabBadge" 
+                    :badge-color="$tabBadgeColor" 
+                    :badge-icon="$tabBadgeIcon"
+                    :badge-icon-position="$tabBadgeIconPosition" 
+                    :badge-tooltip="$tabBadgeTooltip" 
+                    :icon="$tabIcon" 
+                    :icon-position="$tabIconPosition"
+                    :wire:click="'$set(\'' . $livewireProperty . '\', ' . (filled($tabKey) ? ('\'' . $tabKey . '\'') : 'null') . ')'"
+                    :attributes="$tabExtraAttributeBag"
+                >
+                    {{ $tab->getLabel() }}
+                </x-filament::tabs.item>
+            @endforeach
+
+            @foreach ($getEndRenderHooks() as $endRenderHook)
+                {{ \Filament\Support\Facades\FilamentView::renderHook($endRenderHook, scopes: $renderHookScopes) }}
+            @endforeach
+        </x-filament::tabs>
+
+        @foreach ($tabs as $tabKey => $tab)
+            {{ $tab->locale($tabKey)->key($tabKey) }}
+        @endforeach
+    </div>
+@endif

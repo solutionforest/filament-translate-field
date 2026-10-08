@@ -3,45 +3,15 @@
 namespace SolutionForest\FilamentTranslateField;
 
 use Closure;
-use Filament\Contracts\Plugin;
-use Filament\Panel;
 
-class FilamentTranslateFieldPlugin implements Plugin
+class FilamentTranslateField
 {
     /**
      * @var array<string>
      */
-    protected array $defaultLocales = [];
+    protected ?array $defaultLocales = null;
 
     protected ?Closure $getLocaleLabelUsing = null;
-
-    public function getId(): string
-    {
-        return 'filament-translate-field';
-    }
-
-    public function register(Panel $panel): void
-    {
-        //
-    }
-
-    public function boot(Panel $panel): void
-    {
-        //
-    }
-
-    public static function make(): static
-    {
-        return app(static::class);
-    }
-
-    public static function get(): static
-    {
-        /** @var static $plugin */
-        $plugin = filament(app(static::class)->getId());
-
-        return $plugin;
-    }
 
     /**
      * @param  array<string> | null  $defaultLocales
@@ -53,19 +23,12 @@ class FilamentTranslateFieldPlugin implements Plugin
         return $this;
     }
 
-    public function getLocaleLabelUsing(?Closure $callback): static
-    {
-        $this->getLocaleLabelUsing = $callback;
-
-        return $this;
-    }
-
     /**
      * @return array<string>
      */
     public function getDefaultLocales(): array
     {
-        return $this->defaultLocales;
+        return $this->defaultLocales ?? config('filament-translate-field.locales', []);
     }
 
     public function getLocaleLabel(string $locale, ?string $displayLocale = null): ?string
@@ -79,5 +42,12 @@ class FilamentTranslateFieldPlugin implements Plugin
         }
 
         return $label ?? (locale_get_display_name($locale, $displayLocale) ?: null);
+    }
+
+    public function getLocaleLabelUsing(?Closure $callback): static
+    {
+        $this->getLocaleLabelUsing = $callback;
+
+        return $this;
     }
 }

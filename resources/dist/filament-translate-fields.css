@@ -1,0 +1,13 @@
+/*! tailwindcss v4.1.18 | MIT License | https://tailwindcss.com */
+.translate-field-tab-inactive {
+  visibility: hidden;
+  height: calc(var(--spacing, 0.25rem) * 0);
+  overflow-y: hidden;
+  padding: calc(var(--spacing, 0.25rem) * 0);
+}
+.fi-contained .translate-field-tab-active {
+  padding: calc(var(--spacing, 0.25rem) * 6);
+}
+.fi-sc-tabs:not(.fi-contained) .translate-field-tab-active {
+  margin-top: calc(var(--spacing, 0.25rem) * 6);
+}

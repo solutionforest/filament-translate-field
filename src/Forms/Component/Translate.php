@@ -3,42 +3,59 @@
 namespace SolutionForest\FilamentTranslateField\Forms\Component;
 
 use Closure;
-use Illuminate\Support\Str;
-use Illuminate\Support\Collection;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Concerns;
-use Filament\Forms\Components\Component;
-use Filament\Support\Concerns\CanPersistTab;
+use Filament\Forms\Components\Field;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Concerns\CanPersistTab;
+use Filament\Schemas\Components\Concerns\HasLabel;
+use Filament\Schemas\Contracts\HasRenderHookScopes;
+use Filament\Schemas\Schema;
 use Filament\Support\Concerns\CanBeContained;
-use SolutionForest\FilamentTranslateField\FilamentTranslateFieldPlugin;
+use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Illuminate\Support\Collection;
+use SolutionForest\FilamentTranslateField\Facades\FilamentTranslateField;
 use SolutionForest\FilamentTranslateField\Forms\Component\Translate\Tab;
 
-class Translate extends Component 
+class Translate extends Component
 {
     use CanBeContained;
     use CanPersistTab;
-    use Concerns\HasExtraAlpineAttributes;
-    
-    /**
-     * @var view-string
-     */
+    use HasExtraAlpineAttributes;
+    use HasLabel;
+
     protected string $view = 'filament-translate-field::forms.components.translate';
 
-    protected null|Closure|array|Collection $locales = null;
+    protected null | Closure | array | Collection $locales = null;
 
-    protected null|Closure|array|Collection $localeLabels = null;
-    
-    protected Closure|bool $hasPrefixLocaleLabel = false;
+    protected null | Closure | array | Collection $exclude = [];
 
-    protected Closure|bool $hasSuffixLocaleLabel = false;
+    protected null | Closure | array | Collection $localeLabels = null;
 
-    protected null|Closure $fieldTranslatableLabel = null;
+    protected Closure | bool $hasPrefixLocaleLabel = false;
+
+    protected Closure | bool $hasSuffixLocaleLabel = false;
+
+    protected ?Closure $fieldTranslatableLabel = null;
 
     protected ?Closure $preformLocaleLabelUsing = null;
 
     protected int | Closure $activeTab = 1;
 
     protected string | Closure | null $tabQueryStringKey = null;
+
+    protected string | Closure | null $livewireProperty = null;
+
+    protected bool | Closure $isVertical = false;
+
+    /**
+     * @var array<string>
+     */
+    protected array $startRenderHooks = [];
+
+    /**
+     * @var array<string>
+     */
+    protected array $endRenderHooks = [];
 
     final public function __construct(array $schema = [])
     {
@@ -53,35 +70,45 @@ class Translate extends Component
         return $static;
     }
 
-    public function locales(Closure|array|Collection $locales): static
+    public function exclude(Closure | array | Collection $exclude): static
+    {
+        $this->exclude = $exclude;
+
+        return $this;
+    }
+
+    /**
+     * @param  Closure|array<string>|Collection<string>  $locales
+     */
+    public function locales(Closure | array | Collection $locales): static
     {
         $this->locales = $locales;
 
         return $this;
     }
 
-    public function localeLabels(Closure|array|Collection $labels): static
+    public function localeLabels(Closure | array | Collection $labels): static
     {
         $this->localeLabels = $labels;
 
         return $this;
     }
 
-    public function prefixLocaleLabel(Closure|bool $condition = true): static
+    public function prefixLocaleLabel(Closure | bool $condition = true): static
     {
         $this->hasPrefixLocaleLabel = $condition;
 
         return $this;
     }
 
-    public function suffixLocaleLabel(Closure|bool $condition = true): static
+    public function suffixLocaleLabel(Closure | bool $condition = true): static
     {
         $this->hasSuffixLocaleLabel = $condition;
 
         return $this;
     }
 
-    public function fieldTranslatableLabel(null|Closure $fieldTranslatableLabel = null): static
+    public function fieldTranslatableLabel(?Closure $fieldTranslatableLabel = null): static
     {
         $this->fieldTranslatableLabel = $fieldTranslatableLabel;
 
@@ -95,7 +122,7 @@ class Translate extends Component
         return $this;
     }
 
-    public function actions(null|Closure|array $actions): static
+    public function actions(null | Closure | array $actions): static
     {
         $this->actions = $actions;
 
@@ -116,28 +143,36 @@ class Translate extends Component
         return $this;
     }
 
+    /**
+     * @return array<string>|Collection<string>
+     */
     public function getLocales(): array | Collection
     {
-        return $this->evaluate($this->locales) ?? FilamentTranslateFieldPlugin::get()->getDefaultLocales() ?? [];
+        return $this->evaluate($this->locales) ?? FilamentTranslateField::getDefaultLocales();
     }
 
+    /**
+     * @return array<string>|Collection<string>
+     */
     public function getLocaleLabels(): array | Collection
     {
-        return $this->evaluate($this->localeLabels) 
-            ?? collect($this->getLocales())->map(fn ($locale) => FilamentTranslateFieldPlugin::get()->getLocaleLabel($locale, $locale))->all();
+        return $this->evaluate($this->localeLabels)
+            ?? collect($this->getLocales())
+                ->map(fn ($locale) => FilamentTranslateField::getLocaleLabel($locale, $locale))
+                ->all();
     }
 
     public function getLocaleLabel(string $locale): string
     {
-        $labels =  $this->evaluate($this->localeLabels, [
-            'locale' => $locale
-        ]) ?? FilamentTranslateFieldPlugin::get()->getLocaleLabel($locale, $locale);
+        $labels = $this->evaluate($this->localeLabels, [
+            'locale' => $locale,
+        ]) ?? FilamentTranslateField::getLocaleLabel($locale, $locale);
 
         $label = null;
 
         if ($labels && is_array($labels)) {
             $label = data_get($labels, $locale);
-        } else if ($labels && is_string($labels)) {
+        } elseif ($labels && is_string($labels)) {
             $label = $labels;
         }
 
@@ -149,7 +184,7 @@ class Translate extends Component
         return boolval($this->evaluate($this->hasPrefixLocaleLabel, [
             'field' => $component,
             'locale' => $locale,
-            ]) ?? false);
+        ]) ?? false);
     }
 
     public function hasSuffixLocaleLabel(Component $component, string $locale): bool
@@ -157,7 +192,7 @@ class Translate extends Component
         return boolval($this->evaluate($this->hasSuffixLocaleLabel, [
             'field' => $component,
             'locale' => $locale,
-            ]) ?? false);
+        ]) ?? false);
     }
 
     public function getFieldTranslatableLabel(Component $component, string $locale): ?string
@@ -173,23 +208,25 @@ class Translate extends Component
      */
     public function getChildComponentsByLocale(string $locale): array
     {
-        return $this->evaluate($this->childComponents, [
+        /** @var array<Component> */
+        return $this->evaluate($this->childComponents['default'] ?? [], [
             'locale' => $locale,
-        ]);
+        ]) ?? [];
     }
-
 
     public function getActiveTab(): int
     {
         if ($this->isTabPersistedInQueryString()) {
+
             $queryStringTab = request()->query($this->getTabQueryStringKey());
 
-            $tabs = collect($this->getChildComponentContainers())
-                ->map(fn ($container) => $container->getComponents()[0] ?? null)
+            $tabs = collect($this->getChildSchemas())
+                ->map(fn (Schema $schema) => collect($schema->getComponents())->first() ?? null)
                 ->values();
+
             foreach ($tabs as $index => $tab) {
 
-                if ($tab->getId() !== $queryStringTab) {
+                if ($tab?->getId() !== $queryStringTab) {
                     continue;
                 }
 
@@ -211,26 +248,44 @@ class Translate extends Component
     }
 
     /**
-     * @return array<ComponentContainer>
+     * @return array<Schema>
      */
-    public function getChildComponentContainers(bool $withHidden = false): array
+    public function getChildSchemas(bool $withHidden = false): array
     {
         $containers = [];
 
         $locales = $this->getLocales();
 
         foreach ($locales as $locale) {
-            $containers[$locale] = ComponentContainer::make($this->getLivewire())
+            $containers[$locale] = Schema::make($this->getLivewire())
                 ->parentComponent($this)
                 ->components([
-                    Tab::make($this->getLocaleLabel($locale))
+                    Tab::make($locale)
+                        ->label($this->getLocaleLabel($locale))
                         ->locale($locale)
-                        ->registerActions($this->getActions())
-                        ->schema(
-                            collect($this->getChildComponentsByLocale($locale))
+                        ->schema(function () use ($locale) {
+                            // Prepare actions for locale
+                            $actions = collect($this->getActions())
+                                ->map(fn ($action) => $this->prepareActionForLocale($action, $locale))
+                                ->all();
+
+                            $components = collect($this->getChildComponentsByLocale($locale))
                                 ->map(fn ($component) => $this->prepareTranslateLocaleComponent($component, $locale))
-                                ->all()
-                        )
+                                ->all();
+
+                            return collect($components)
+                                ->when(
+                                    count($actions) > 0,
+                                    function (Collection $collection) use ($actions) {
+                                        return $collection->prepend(
+                                            Actions::make($actions)
+                                                // Align to end
+                                                ->alignEnd()
+                                        );
+                                    }
+                                )
+                                ->all();
+                        }),
                 ])
                 ->getClone();
         }
@@ -238,36 +293,80 @@ class Translate extends Component
         return $containers;
     }
 
-    protected function prepareTranslateLocaleComponent(Component $component, string $locale)
+    protected function prepareActionForLocale($action, string $locale)
+    {
+        $cloned = clone $action;
+        $cloned->name("{$action->getName()}_{$locale}");
+
+        $arguments = $cloned->getArguments();
+        $arguments['locale'] = $locale;
+
+        // Invoking (rather than just calling `arguments()`) makes the locale part of the
+        // `mountAction()` call rendered in the browser, so it is available when the action runs.
+        return $cloned($arguments);
+    }
+
+    protected function prepareTranslateLocaleComponent(Component $component, string $locale): Component
     {
         $localeComponent = clone $component;
-        
-        $localeComponent->label($this->getFieldTranslatableLabel($component, $locale) ?? $component->getLabel());
 
-        $localeLabel = $this->getLocaleLabel($locale);
-        $performedLocaleLabel = $this->preformLocaleLabelUsing
-            ? $this->evaluate($this->preformLocaleLabelUsing, [
-                'locale' => $locale,
-                'label' => $localeLabel,
-            ])
-            : null;
-        if (! $performedLocaleLabel) {
-            $performedLocaleLabel = "({$localeLabel})";
-        }
-        if ($this->hasPrefixLocaleLabel($component, $locale)) {
-            $localeComponent->label("{$performedLocaleLabel} {$localeComponent->getLabel()}");
-        }
-        if ($this->hasSuffixLocaleLabel($component, $locale)) {
-            $localeComponent->label("{$localeComponent->getLabel()} {$performedLocaleLabel}");
-        }
+        if ($localeComponent instanceof Field || method_exists($localeComponent, 'getName')) {
 
-        // Spatie transltable field format
-        $localeComponent->name($component->getName().'.'.$locale);
-        $localeComponent->statePath($localeComponent->getName());
+            $localeComponentName = $localeComponent->getName();
+
+            if (filled($localeComponentName) && is_string($localeComponentName) && ! in_array($localeComponentName, $this->exclude)) {
+                if (method_exists($localeComponent, 'label')) {
+                    $currentLabel = method_exists($component, 'getLabel') ? $component->getLabel() : null;
+                    $localeComponent->label($this->getFieldTranslatableLabel($component, $locale) ?? $currentLabel);
+                }
+
+                $localeLabel = $this->getLocaleLabel($locale);
+                $performedLocaleLabel = $this->preformLocaleLabelUsing
+                    ? $this->evaluate($this->preformLocaleLabelUsing, [
+                        'locale' => $locale,
+                        'label' => $localeLabel,
+                    ])
+                    : null;
+                if (! $performedLocaleLabel) {
+                    $performedLocaleLabel = "({$localeLabel})";
+                }
+                if (method_exists($localeComponent, 'label')) {
+                    if ($this->hasPrefixLocaleLabel($component, $locale)) {
+                        $existing = method_exists($localeComponent, 'getLabel') ? $localeComponent->getLabel() : '';
+                        $localeComponent->label("{$performedLocaleLabel} {$existing}");
+                    }
+                    if ($this->hasSuffixLocaleLabel($component, $locale)) {
+                        $existing = method_exists($localeComponent, 'getLabel') ? $localeComponent->getLabel() : '';
+                        $localeComponent->label("{$existing} {$performedLocaleLabel}");
+                    }
+                }
+
+                // Spatie transltable field format
+                if (method_exists($localeComponent, 'name')) {
+                    $localeComponent->name($localeComponentName . '.' . $locale);
+                }
+                if (method_exists($localeComponent, 'statePath')) {
+                    $localeComponent->statePath($localeComponent->getName());
+                    $localeComponent->flushCachedAbsoluteStatePath();
+                }
+            }
+
+        } else {
+
+            $childComponents = $localeComponent->getDefaultChildComponents();
+
+            if ($childComponents) {
+                $localeComponent->schema(
+                    collect($childComponents)
+                        ->map(fn ($childComponent) => $this->prepareTranslateLocaleComponent($childComponent, $locale))
+                        ->all()
+                );
+            }
+        }
 
         return $localeComponent;
     }
-    
+
     /**
      * @return array<mixed>
      */
@@ -276,7 +375,81 @@ class Translate extends Component
         if ($parameterName == 'locales') {
             return [$this->getLocales()];
         }
+
         return parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName);
     }
-}
 
+    /**
+     * @param  array<string>  $hooks
+     */
+    public function startRenderHooks(array $hooks): static
+    {
+        $this->startRenderHooks = $hooks;
+
+        return $this;
+    }
+
+    /**
+     * @param  array<string>  $hooks
+     */
+    public function endRenderHooks(array $hooks): static
+    {
+        $this->endRenderHooks = $hooks;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getStartRenderHooks(): array
+    {
+        return $this->startRenderHooks;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getEndRenderHooks(): array
+    {
+        return $this->endRenderHooks;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getRenderHookScopes(): array
+    {
+        $livewire = $this->getLivewire();
+
+        if (! ($livewire instanceof HasRenderHookScopes)) {
+            return [];
+        }
+
+        return $livewire->getRenderHookScopes();
+    }
+
+    public function livewireProperty(string | Closure | null $property): static
+    {
+        $this->livewireProperty = $property;
+
+        return $this;
+    }
+
+    public function getLivewireProperty(): ?string
+    {
+        return $this->evaluate($this->livewireProperty);
+    }
+
+    public function vertical(bool | Closure $condition = true): static
+    {
+        $this->isVertical = $condition;
+
+        return $this;
+    }
+
+    public function isVertical(): bool
+    {
+        return (bool) $this->evaluate($this->isVertical);
+    }
+}

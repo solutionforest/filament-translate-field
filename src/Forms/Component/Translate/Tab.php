@@ -2,11 +2,14 @@
 
 namespace SolutionForest\FilamentTranslateField\Forms\Component\Translate;
 
-use Filament\Forms\Components\Tabs\Tab as BaseComponent;
-
-class Tab extends BaseComponent
+class Tab extends \Filament\Schemas\Components\Tabs\Tab
 {
-    protected string $view = 'filament-translate-field::forms.components.translate-tab';
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->view('filament-translate-field::forms.components.translate-tab');
+    }
 
     protected ?string $locale = null;
 
@@ -17,9 +20,9 @@ class Tab extends BaseComponent
         return $this;
     }
 
-    public function getKey(): ?string
+    public function getKey(bool $isAbsolute = true): ?string
     {
-        return parent::getKey() ?? ($this->getActions() ? $this->getId() : null);
+        return parent::getKey() ?? (count($this->getActions()) > 0 ? $this->getId() : null);
     }
 
     public function getLocale(): ?string
