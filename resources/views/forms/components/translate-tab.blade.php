@@ -45,7 +45,7 @@
                         'wire:key' => $getLivewireKey() . '.container',
                     ], escape: false)
                     ->merge($getExtraAttributes(), escape: false)
-                    ->class(['fi-sc-tabs-tab fi-active'])
+                    ->class(['fi-sc-tabs-tab fi-active', $activeTabClasses])
             }}
         >
             {{ $childSchema }}

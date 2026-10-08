@@ -300,9 +300,10 @@ class Translate extends Component
 
         $arguments = $cloned->getArguments();
         $arguments['locale'] = $locale;
-        $cloned->arguments($arguments);
 
-        return $cloned;
+        // Invoking (rather than just calling `arguments()`) makes the locale part of the
+        // `mountAction()` call rendered in the browser, so it is available when the action runs.
+        return $cloned($arguments);
     }
 
     protected function prepareTranslateLocaleComponent(Component $component, string $locale): Component
