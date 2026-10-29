@@ -2,6 +2,27 @@
 
 All notable changes to `filament-translate-field` will be documented in this file.
 
+## 3.1.0 - 2026-10-29
+
+### What's Changed
+
+- Fix translated fields invisible on first load (no tab active) by aligning translate tabs with Filament schemas Alpine API (`hasTabPanels`, `schemaKey`, `tablist`, `selectTab`)
+- Require `filament/filament` `^5.10.2`
+- Document Filament ↔ plugin version matrix in README
+
+* Bump ramsey/composer-install from 3 to 4 by @dependabot[bot] in https://github.com/solutionforest/filament-translate-field/pull/36
+* Bump nick-fields/retry from 3 to 4 by @dependabot[bot] in https://github.com/solutionforest/filament-translate-field/pull/37
+* Bump dependabot/fetch-metadata from 2.5.0 to 3.1.0 by @dependabot[bot] in https://github.com/solutionforest/filament-translate-field/pull/40
+* Bump actions/cache from 5 to 6 by @dependabot[bot] in https://github.com/solutionforest/filament-translate-field/pull/43
+* Bump actions/checkout from 6 to 7 by @dependabot[bot] in https://github.com/solutionforest/filament-translate-field/pull/42
+
+### Compatibility
+
+- Filament **v5.10.2+**
+- For Filament ≤5.10.1, stay on **3.0.3**
+
+**Full Changelog**: https://github.com/solutionforest/filament-translate-field/compare/3.0.3...3.1.0
+
 ## 2.2.0 - 2026-10-29
 
 ### What's Changed
