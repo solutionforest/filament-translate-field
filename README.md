@@ -12,8 +12,12 @@ Filament Translate Field is a library for Filament CMS that simplifies managing 
 | Filament Version | Filament Translate Field Version |
 | ---------------- | -------------------------------- |
 | v3.x             | v0.x – v1.x                      |
-| v4.x             | v2.x                             |
-| v5.x             | v3.x                             |
+| v4.0 – v4.15.1   | v2.0.0 – v2.1.3                  |
+| v4.15.2+         | v2.2.x                           |
+| v5.0 – v5.10.1   | v3.0.0 – v3.0.3                  |
+| v5.10.2+         | v3.1.x                           |
+
+> **Note:** `2.2.x` requires Filament `^4.15.2` (tabs Alpine API). Stay on `2.1.3` for Filament ≤4.15.1. `3.1.x` requires Filament `^5.10.2`; stay on `3.0.3` for Filament ≤5.10.1.
 
 You can install the package via composer:
 

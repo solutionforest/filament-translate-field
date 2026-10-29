@@ -34,6 +34,19 @@ it('renders tabs per locale with default labels and active state', function () {
         ->assertSee('fi-sc-tabs');
 });
 
+it('renders filament schemas tabs alpine props and tablist markup', function () {
+    $post = makePost();
+
+    Livewire::test(EditPost::class, ['record' => $post->getKey()])
+        ->assertSee('isTabPersisted', false)
+        ->assertSee('schemaKey', false)
+        ->assertSee('hasTabPanels', false)
+        ->assertSee('x-ref="tabsHeader"', false)
+        ->assertSee('x-ref="tablist"', false)
+        ->assertSee('data-tab-key', false)
+        ->assertSee('selectTab(', false);
+});
+
 it('uses custom locale labels and prefix/suffix and transformer', function () {
     $post = makePost();
 
