@@ -25,12 +25,16 @@
         wire:ignore.self
         x-data="tabsSchemaComponent({
             activeTab: @js($activeTab),
+            hasTabPanels: @js(true),
             isScrollable: @js(true),
+            isVertical: @js($isVertical),
+            isTabPersisted: @js($isTabPersisted()),
             isTabPersistedInQueryString: @js($isTabPersistedInQueryString()),
             livewireId: @js($this->getId()),
+            schemaKey: @js($getRootContainer()->getKey()),
             tab: @if ($isTabPersisted() && filled($persistenceKey = $getKey())) $persist(null).as('tabs-{{ $persistenceKey }}') @else @js(null) @endif,
             tabQueryStringKey: @js($getTabQueryStringKey()),
-        })" 
+        })"
         {{ $attributes->merge(
                 [
                     'id' => $getId(),
@@ -41,55 +45,64 @@
             ->merge($getExtraAttributes(), escape: false)
             ->merge($getExtraAlpineAttributes(), escape: false)
             ->class([
-                'fi-sc-tabs', 
-                'fi-contained' => $isContained, 
+                'fi-sc-tabs',
+                'fi-contained' => $isContained,
                 'fi-vertical' => $isVertical,
-            ]) 
+            ])
         }}>
         <input type="hidden"
             value="{{ collect($tabs)->filter(static fn(Tab $tab): bool => $tab->isVisible())->map(static fn(Tab $tab) => $tab->getKey(isAbsolute: false))->values()->toJson() }}"
-            x-ref="tabsData" 
+            x-ref="tabsData"
         />
 
-        <x-filament::tabs 
-            :contained="$isContained" 
-            class="mb-4" 
-            :label="$label" 
-            :vertical="$isVertical" 
+        <x-filament::tabs
+            :contained="$isContained"
+            class="mb-4"
+            :label="$label"
+            :vertical="$isVertical"
+            x-ref="tabsHeader"
             x-cloak
         >
             @foreach ($getStartRenderHooks() as $startRenderHook)
                 {{ \Filament\Support\Facades\FilamentView::renderHook($startRenderHook, scopes: $renderHookScopes) }}
             @endforeach
 
-            @foreach ($tabs as $tab)
-                @php
-                    $tabKey = $tab->getKey(isAbsolute: false);
-                    $tabBadge = $tab->getBadge();
-                    $tabBadgeColor = $tab->getBadgeColor();
-                    $tabBadgeIcon = $tab->getBadgeIcon();
-                    $tabBadgeIconPosition = $tab->getBadgeIconPosition();
-                    $tabBadgeTooltip = $tab->getBadgeTooltip();
-                    $tabIcon = $tab->getIcon();
-                    $tabIconPosition = $tab->getIconPosition();
-                    $tabExtraAttributeBag = $tab->getExtraAttributeBag();
-                @endphp
+            <div
+                x-ref="tablist"
+                class="fi-sc-tabs-tablist"
+                x-on:keydown="handleKeydown($event)"
+            >
+                @foreach ($tabs as $tab)
+                    @php
+                        $tabKey = $tab->getKey(isAbsolute: false);
+                        $tabBadge = $tab->getBadge();
+                        $tabBadgeColor = $tab->getBadgeColor();
+                        $tabBadgeIcon = $tab->getBadgeIcon();
+                        $tabBadgeIconPosition = $tab->getBadgeIconPosition();
+                        $tabBadgeTooltip = $tab->getBadgeTooltip();
+                        $tabIcon = $tab->getIcon();
+                        $tabIconPosition = $tab->getIconPosition();
+                        $tabExtraAttributeBag = $tab->getExtraAttributeBag()->merge([
+                            'data-tab-key' => $tabKey,
+                        ]);
+                    @endphp
 
-                <x-filament::tabs.item 
-                    :alpine-active="'tab === \'' . $tabKey . '\''" 
-                    :badge="$tabBadge" 
-                    :badge-color="$tabBadgeColor" 
-                    :badge-icon="$tabBadgeIcon"
-                    :badge-icon-position="$tabBadgeIconPosition" 
-                    :badge-tooltip="$tabBadgeTooltip" 
-                    :icon="$tabIcon" 
-                    :icon-position="$tabIconPosition"
-                    :x-on:click="'tab = \'' . $tabKey . '\''" 
-                    :attributes="$tabExtraAttributeBag"
-                >
-                    {{ $tab->getLabel() }}
-                </x-filament::tabs.item>
-            @endforeach
+                    <x-filament::tabs.item
+                        :alpine-active="'tab === \'' . $tabKey . '\''"
+                        :badge="$tabBadge"
+                        :badge-color="$tabBadgeColor"
+                        :badge-icon="$tabBadgeIcon"
+                        :badge-icon-position="$tabBadgeIconPosition"
+                        :badge-tooltip="$tabBadgeTooltip"
+                        :icon="$tabIcon"
+                        :icon-position="$tabIconPosition"
+                        :x-on:click="'selectTab(\'' . $tabKey . '\', $event)'"
+                        :attributes="$tabExtraAttributeBag"
+                    >
+                        {{ $tab->getLabel() }}
+                    </x-filament::tabs.item>
+                @endforeach
+            </div>
 
             @foreach ($getEndRenderHooks() as $endRenderHook)
                 {{ \Filament\Support\Facades\FilamentView::renderHook($endRenderHook, scopes: $renderHookScopes) }}
