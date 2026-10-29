@@ -2,6 +2,21 @@
 
 All notable changes to `filament-translate-field` will be documented in this file.
 
+## 2.2.0 - 2026-10-29
+
+### What's Changed
+
+- Fix translated fields invisible on first load (no tab active) by aligning translate tabs with Filament schemas Alpine API (`hasTabPanels`, `schemaKey`, `tablist`, `selectTab`)
+- Require `filament/filament` `^4.15.2`
+- Document Filament ↔ plugin version matrix in README
+
+### Compatibility
+
+- Filament **v4.15.2+**
+- For Filament ≤4.15.1, stay on **2.1.3**
+
+**Full Changelog**: https://github.com/solutionforest/filament-translate-field/compare/2.1.3...2.2.0
+
 ## 3.0.3 - 2026-04-30
 
 ### 🐛 Bug Fixes
